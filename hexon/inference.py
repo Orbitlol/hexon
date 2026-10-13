@@ -3,11 +3,13 @@ Hexon On-Device Mobile Inference Engine.
 
 Loads either a quantized `.gguf` v3 file or a `.pt` checkpoint in strict
 inference-only mode (no gradients, no training hooks) and performs fast
-KV-cached generation.
+KV-cached generation with heavy ChromaDB RAG grounding and cross-turn
+anti-copying n-gram protection.
 """
 
 from __future__ import annotations
 
+import re
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
@@ -22,8 +24,8 @@ from .train import load_hexon_checkpoint
 
 class HexonMobileEngine:
     """
-    Inference-only runtime for Hexon models on mobile/edge devices.
-    Accepts `.gguf` files (F32, F16, Q8_0, Q4_0) or `.pt` checkpoints.
+    Inference-only runtime for Hexon & Hexon-Code models on mobile/edge devices.
+    Accepts `.gguf` files (F32, F16, Q8_0, Q4_0, Q4_1, Q4_CODE) or `.pt` checkpoints.
     """
 
     def __init__(
@@ -39,11 +41,16 @@ class HexonMobileEngine:
         self.source_path = source_path
         self.source_format = source_format
         self.rag = rag
+        self.history: List[Dict[str, str]] = []
 
     def attach_rag(self, rag: Any) -> "HexonMobileEngine":
         """Attach a `HexonChromaRAG` instance to this inference engine."""
         self.rag = rag
         return self
+
+    def reset_history(self) -> None:
+        """Clear multi-turn conversation history."""
+        self.history.clear()
 
     @classmethod
     def from_file(
@@ -77,20 +84,50 @@ class HexonMobileEngine:
             rag=rag,
         )
 
+    def _extract_rag_grounding_ids(self, chunks: Sequence[Dict[str, Any]]) -> List[int]:
+        """
+        Extract substantive content and code token IDs from retrieved ChromaDB chunks
+        for logit grounding during autoregressive decoding.
+        """
+        if not chunks or self.model.config.vocab_size < 16000:
+            return []
+        grounded_ids: set[int] = set()
+        for ch in chunks[:2]:
+            txt = str(ch.get("text", ""))
+            # Extract technical terms, numbers, identifiers, and 4+ char words
+            words = set(re.findall(r"\b[A-Za-z_][A-Za-z0-9_]{3,}\b|\b\d+\b", txt))
+            for w in words:
+                for tid in self.tokenizer.encode(" " + w, add_bos=False, add_eos=False):
+                    if tid > 256:
+                        grounded_ids.add(int(tid))
+        return list(grounded_ids)
+
     @torch.inference_mode()
     def reply(
         self,
         user_prompt: str,
         system_prompt: Optional[str] = None,
-        max_new_tokens: int = 80,
+        max_new_tokens: int = 110,
         temperature: float = 0.0,
         top_k: int = 20,
         top_p: float = 0.9,
         repetition_penalty: Optional[float] = None,
-        use_rag: bool = False,
+        use_rag: Optional[bool] = None,
         rag_top_k: int = 3,
+        history: Optional[Sequence[Dict[str, str]]] = None,
+        remember_turn: bool = False,
+        no_repeat_ngram_size: Optional[int] = None,
+        rag_boost: float = 0.0,
     ) -> Dict[str, Any]:
-        """Generate an assistant response to a user message with optional ChromaDB RAG."""
+        """
+        Generate an assistant response to a user message with ChromaDB RAG grounding
+        and cross-turn anti-copying protection.
+        """
+        is_large_model = self.model.config.vocab_size >= 16000
+        if use_rag is None:
+            # Hexon-Code leans heavily on ChromaDB by default
+            use_rag = True if self.model.config.model_name == "hexon-code" else False
+
         retrieved_chunks: List[Dict[str, Any]] = []
         effective_prompt = user_prompt
 
@@ -100,15 +137,32 @@ class HexonMobileEngine:
                 self.rag = HexonChromaRAG()
             aug_prompt, chunks = self.rag.build_rag_prompt(user_prompt, top_k=rag_top_k)
             retrieved_chunks = [c.to_dict() for c in chunks]
-            if self.model.config.vocab_size >= 16000 and chunks:
+            if is_large_model and chunks:
                 effective_prompt = aug_prompt
 
         if repetition_penalty is None:
-            repetition_penalty = 1.0 if self.model.config.vocab_size >= 16000 else 1.05
+            repetition_penalty = 1.0 if is_large_model else 1.05
+        if no_repeat_ngram_size is None:
+            no_repeat_ngram_size = 5 if is_large_model else 0
+
+        active_history = list(history) if history is not None else (list(self.history) if remember_turn else [])
+
+        # Collect previous assistant turn token sequences so `generate()` blocks cross-turn copying
+        ban_copy_sequences: List[List[int]] = []
+        for msg in active_history:
+            if msg.get("role") == "assistant":
+                prev_text = msg.get("content", "").strip()
+                if prev_text:
+                    ban_copy_sequences.append(
+                        self.tokenizer.encode(prev_text, add_bos=False, add_eos=False)
+                    )
 
         messages: List[Dict[str, str]] = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
+        for msg in active_history[-4:]:
+            if msg.get("role") in ("user", "assistant"):
+                messages.append({"role": msg["role"], "content": msg["content"]})
         messages.append({"role": "user", "content": effective_prompt})
 
         formatted = self.tokenizer.apply_chat_template(
@@ -116,6 +170,8 @@ class HexonMobileEngine:
         )
         prompt_ids = self.tokenizer.encode(formatted, add_bos=True, add_eos=False)
         input_tensor = torch.tensor([prompt_ids], dtype=torch.long)
+
+        rag_token_ids = self._extract_rag_grounding_ids(retrieved_chunks) if (use_rag and is_large_model) else []
 
         t0 = time.perf_counter()
         output_tensor = self.model.generate(
@@ -126,6 +182,11 @@ class HexonMobileEngine:
             top_p=top_p,
             repetition_penalty=repetition_penalty,
             eos_token_id=self.tokenizer.eos_token_id,
+            no_repeat_ngram_size=no_repeat_ngram_size,
+            ban_copy_sequences=ban_copy_sequences,
+            rag_token_ids=rag_token_ids,
+            rag_boost=rag_boost if rag_token_ids else 0.0,
+            generated_only_repetition_penalty=is_large_model,
         )
         elapsed = time.perf_counter() - t0
 
@@ -134,7 +195,42 @@ class HexonMobileEngine:
             new_ids = new_ids[: new_ids.index(self.tokenizer.eos_token_id)]
 
         response_text = self.tokenizer.decode(new_ids, skip_special_tokens=True).strip()
+        # If the model completed a fenced code block (```...```) and then got cut off
+        # starting a second unclosed code block or trailing partial line, trim cleanly
+        if is_large_model and response_text.count("```") >= 2:
+            first_open = response_text.find("```")
+            first_close = response_text.find("```", first_open + 3)
+            if first_close != -1:
+                after_code = response_text[first_close + 3 :]
+                if "```" in after_code:
+                    # Cut before a second unclosed code block
+                    after_code = after_code[: after_code.find("```")].strip()
+                elif "\ndef " in after_code:
+                    after_code = after_code[: after_code.find("\ndef ")].strip()
+                # If trailing sentence after code was truncated mid-sentence by max_new_tokens,
+                # trim to the last complete sentence boundary
+                if after_code and not after_code.endswith((".", "!", "?", "`")):
+                    last_dot = max(after_code.rfind("."), after_code.rfind("!"))
+                    if last_dot != -1:
+                        after_code = after_code[: last_dot + 1].strip()
+                    else:
+                        after_code = ""
+                response_text = (
+                    response_text[: first_close + 3]
+                    + ("\n\n" + after_code if after_code else "")
+                ).strip()
+        elif is_large_model and not response_text.startswith("```") and len(new_ids) >= max_new_tokens - 2:
+            # Trim truncated trailing sentence on prose answers if cut off by max_new_tokens
+            if not response_text.endswith((".", "!", "?", "`", ")")):
+                last_dot = max(response_text.rfind("."), response_text.rfind("!"))
+                if last_dot > len(response_text) // 3:
+                    response_text = response_text[: last_dot + 1].strip()
+
         num_generated = max(1, len(new_ids))
+
+        if remember_turn:
+            self.history.append({"role": "user", "content": user_prompt})
+            self.history.append({"role": "assistant", "content": response_text})
 
         return {
             "prompt": user_prompt,
@@ -145,9 +241,33 @@ class HexonMobileEngine:
             "tokens_per_sec": round(num_generated / max(elapsed, 1e-6), 2),
             "source_format": self.source_format,
             "mobile_inference_locked": self.model.mobile_inference_locked,
-            "rag_enabled": use_rag,
+            "rag_enabled": bool(use_rag),
             "retrieved_chunks": retrieved_chunks,
         }
+
+    @torch.inference_mode()
+    def chat(
+        self,
+        user_prompt: str,
+        system_prompt: Optional[str] = None,
+        max_new_tokens: int = 110,
+        temperature: float = 0.0,
+        use_rag: bool = True,
+        rag_top_k: int = 2,
+    ) -> Dict[str, Any]:
+        """
+        Stateful multi-turn chat interface with automatic ChromaDB RAG grounding
+        and cross-turn anti-copying n-gram protection.
+        """
+        return self.reply(
+            user_prompt=user_prompt,
+            system_prompt=system_prompt,
+            max_new_tokens=max_new_tokens,
+            temperature=temperature,
+            use_rag=use_rag,
+            rag_top_k=rag_top_k,
+            remember_turn=True,
+        )
 
     @torch.inference_mode()
     def benchmark(
@@ -160,8 +280,8 @@ class HexonMobileEngine:
             prompts = [
                 "Who are you?",
                 "Do you train on my phone?",
-                "How does Hexon save memory on mobile?",
-                "What export formats does Hexon support?",
+                "Write a Python function to check if a number is prime.",
+                "What processor and battery does the Poco M3 have?",
             ]
         results = [
             self.reply(p, max_new_tokens=max_new_tokens, temperature=0.0)

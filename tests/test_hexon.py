@@ -356,4 +356,41 @@ def test_hexon_135m_compositional_and_rag_inference() -> None:
     assert "Snapdragon 662" in res_rag["response"] or "6000" in res_rag["response"]
 
 
+def test_hexon_code_model_200_300_word_rag_and_multiturn_anti_copy() -> None:
+    from hexon.rag import HexonChromaRAG
+
+    gguf_code = Path("exports/hexon-code.gguf")
+    assert gguf_code.exists(), "hexon-code.gguf (100-200 MB range) must exist in exports/"
+
+    reader = GGUFReader(gguf_code)
+    summary = reader.summary()
+    assert summary["model_name"] == "hexon-code"
+    assert 100.0 <= summary["file_size_decimal_mb"] <= 200.0
+    assert summary["mobile_inference_only"] is True
+    assert summary["trainable_on_device"] is False
+
+    rag = HexonChromaRAG(persist_dir="data/chromadb")
+    word_stats = rag.chunk_word_count_stats()
+    assert 200 <= word_stats["min_words"] <= 300
+    assert 200 <= word_stats["max_words"] <= 300
+
+    engine = HexonMobileEngine.from_file(gguf_code, rag=rag)
+    # 1. Identity turn
+    t1 = engine.chat("Hi! Who are you?", max_new_tokens=64)
+    assert "Hexon-Code" in t1["response"]
+    assert t1["rag_enabled"] is True
+
+    # 2. Coding turn (must not copy turn 1 and must produce valid Python code)
+    t2 = engine.chat("Write a Python function for binary search.", max_new_tokens=90)
+    assert "def binary_search" in t2["response"]
+    assert t2["response"] != t1["response"]
+
+    # 3. Normal factual question turn (must use ChromaDB and not copy turn 2)
+    t3 = engine.chat("What processor, GPU, and battery does the Poco M3 have?", max_new_tokens=64)
+    assert "Snapdragon 662" in t3["response"]
+    assert "Adreno 610" in t3["response"] or "6000" in t3["response"]
+    assert t3["response"] != t2["response"]
+
+
+
 

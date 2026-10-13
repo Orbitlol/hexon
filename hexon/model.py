@@ -369,14 +369,36 @@ class HexonForCausalLM(nn.Module):
         top_p: float = 0.9,
         repetition_penalty: float = 1.1,
         eos_token_id: Optional[int] = None,
+        no_repeat_ngram_size: int = 0,
+        ban_copy_sequences: Optional[List[List[int]]] = None,
+        rag_token_ids: Optional[List[int]] = None,
+        rag_boost: float = 0.0,
+        generated_only_repetition_penalty: bool = False,
     ) -> torch.Tensor:
         """
-        Autoregressive token generation with KV-cache for low-latency mobile inference.
+        Autoregressive token generation with KV-cache, ChromaDB grounding logit
+        boost, generated-only repetition penalty, and cross-turn n-gram blocking
+        to prevent hallucination and multi-turn response copying.
         """
         eos_id = self.config.eos_token_id if eos_token_id is None else eos_token_id
+        prompt_len = input_ids.shape[1]
         generated = input_ids.clone()
         past_key_values: Optional[List[Tuple[torch.Tensor, torch.Tensor]]] = None
         cur_input = generated
+
+        # Precompute banned n-gram lookup table from previous assistant turns
+        prior_banned_ngrams: Dict[Tuple[int, ...], set[int]] = {}
+        prior_turn_tokens: List[int] = []
+        if ban_copy_sequences:
+            for seq in ban_copy_sequences:
+                prior_turn_tokens.extend(seq)
+                if no_repeat_ngram_size >= 2 and len(seq) >= no_repeat_ngram_size:
+                    n = no_repeat_ngram_size
+                    for idx in range(len(seq) - n + 1):
+                        prefix = tuple(seq[idx : idx + n - 1])
+                        prior_banned_ngrams.setdefault(prefix, set()).add(int(seq[idx + n - 1]))
+
+        rag_set = [int(t) for t in rag_token_ids if 0 <= int(t) < self.config.vocab_size] if rag_token_ids else []
 
         for _ in range(max_new_tokens):
             if generated.shape[1] >= self.config.max_position_embeddings:
@@ -390,14 +412,52 @@ class HexonForCausalLM(nn.Module):
             logits = out["logits"][:, -1, :].clone()  # [B, V]
             past_key_values = out["past_key_values"]
 
-            # Repetition penalty
+            # 1. ChromaDB Grounding Logit Boost on unvisited RAG tokens
+            if rag_set and rag_boost > 0.0:
+                for b in range(generated.shape[0]):
+                    gen_so_far = set(generated[b, prompt_len:].tolist())
+                    active_rag = [t for t in rag_set if t not in gen_so_far]
+                    if active_rag:
+                        idx_t = torch.tensor(active_rag, dtype=torch.long, device=logits.device)
+                        logits[b, idx_t] = logits[b, idx_t] + rag_boost
+
+            # 2. Repetition penalty (either generated+prior-assistant only, or full sequence)
             if repetition_penalty != 1.0:
                 for b in range(generated.shape[0]):
-                    seen_tokens = torch.unique(generated[b])
+                    if generated_only_repetition_penalty:
+                        gen_slice = generated[b, prompt_len:].tolist()
+                        combined_seen = gen_slice + prior_turn_tokens
+                        if not combined_seen:
+                            continue
+                        seen_tokens = torch.tensor(
+                            list(set(combined_seen)), dtype=torch.long, device=logits.device
+                        )
+                    else:
+                        seen_tokens = torch.unique(generated[b])
                     score = logits[b, seen_tokens]
                     logits[b, seen_tokens] = torch.where(
                         score < 0, score * repetition_penalty, score / repetition_penalty
                     )
+
+            # 3. N-Gram Blocking across current response (8-gram) AND previous assistant turns (5-gram)
+            if no_repeat_ngram_size >= 2:
+                n = no_repeat_ngram_size
+                for b in range(generated.shape[0]):
+                    gen_list = generated[b, prompt_len:].tolist()
+                    if len(gen_list) >= n - 1:
+                        cur_prefix = tuple(gen_list[-(n - 1) :])
+                        # Only block from prior assistant turns on 5-gram match,
+                        # and only block within current response on >=8-gram match (skipping whitespace token 220/198)
+                        banned_next: set[int] = set(prior_banned_ngrams.get(cur_prefix, set()))
+                        intra_n = max(8, n)
+                        if len(gen_list) >= intra_n and not all(t in (198, 220) for t in cur_prefix):
+                            intra_prefix = tuple(gen_list[-(intra_n - 1) :])
+                            for idx in range(len(gen_list) - intra_n + 1):
+                                if tuple(gen_list[idx : idx + intra_n - 1]) == intra_prefix:
+                                    banned_next.add(int(gen_list[idx + intra_n - 1]))
+                        for bt in banned_next:
+                            if 0 <= bt < logits.size(-1):
+                                logits[b, bt] = float("-inf")
 
             if temperature <= 1e-5:
                 next_token = torch.argmax(logits, dim=-1, keepdim=True)

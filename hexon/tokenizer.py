@@ -465,13 +465,28 @@ class HexonTokenizer:
             if not has_sys:
                 parts_gpt2.append(
                     "<|im_start|>system\n"
-                    "You are Hexon, a helpful, concise, and intelligent AI assistant running locally on a mobile device. "
-                    "Your name is Hexon. You are trained offline on servers and exported to GGUF v3, so you never train on the mobile device."
+                    "You are Hexon-Code, an expert coding and general-knowledge AI assistant running locally on a mobile device with ChromaDB RAG. "
+                    "Write clean, accurate code and concise, factual answers grounded in retrieved context. Never repeat previous responses."
                     "<|im_end|>\n"
                 )
-            for msg in msgs[-8:]:
+            else:
+                sys_m = [m for m in msgs if m.get("role", "").strip().lower() == "system"][0]
+                parts_gpt2.append(f"<|im_start|>system\n{sys_m.get('content', '').strip()}<|im_end|>\n")
+
+            non_sys = [m for m in msgs if m.get("role", "").strip().lower() != "system"]
+            # If the latest user message carries a full 200-300 word ChromaDB context block,
+            # focus attention 100% on the current grounded prompt so prior turns never bleed in.
+            if non_sys and "Context from ChromaDB:" in non_sys[-1].get("content", ""):
+                window_msgs = [non_sys[-1]]
+            else:
+                window_msgs = non_sys[-3:]
+            for idx, msg in enumerate(window_msgs):
                 role = msg.get("role", "user").strip().lower()
                 content = msg.get("content", "").strip()
+                is_last = idx == len(window_msgs) - 1
+                if not is_last and role == "user" and "Context from ChromaDB:" in content:
+                    # Keep only the user's actual question from prior turns
+                    content = content.split("\n")[-1].strip()
                 parts_gpt2.append(f"<|im_start|>{role}\n{content}<|im_end|>\n")
             if add_generation_prompt:
                 parts_gpt2.append("<|im_start|>assistant\n")
@@ -515,6 +530,17 @@ class HexonTokenizer:
         return types
 
     def to_dict(self) -> Dict[str, Any]:
+        chat_tpl = CHATML_TEMPLATE
+        if self.tokenizer_model == "gpt2":
+            chat_tpl = (
+                "{% for message in messages %}"
+                "{% if loop.first and messages[0]['role'] != 'system' %}"
+                "{{ '<|im_start|>system\\nYou are Hexon-Code, an expert coding and general-knowledge AI assistant running locally on a mobile device with ChromaDB RAG. Write clean, accurate code and concise, factual answers grounded in retrieved context. Never repeat previous responses.<|im_end|>\\n' }}"
+                "{% endif %}"
+                "{{'<|im_start|>' + message['role'] + '\\n' + message['content'] + '<|im_end|>' + '\\n'}}"
+                "{% endfor %}"
+                "{% if add_generation_prompt %}{{ '<|im_start|>assistant\\n' }}{% endif %}"
+            )
         return {
             "model_type": "gpt2-bpe" if self.tokenizer_model == "gpt2" else "llama-spm-bpe",
             "tokenizer_model": self.tokenizer_model,
@@ -524,7 +550,7 @@ class HexonTokenizer:
             "tokens": self.tokens,
             "scores": self.scores,
             "merges": self.merges,
-            "chat_template": CHATML_TEMPLATE,
+            "chat_template": chat_tpl,
         }
 
     @classmethod

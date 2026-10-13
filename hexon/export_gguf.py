@@ -51,11 +51,12 @@ class GGMLQuantizationType(IntEnum):
 
 
 GGUF_FILE_TYPE_MAP: Dict[str, int] = {
-    "f32": 0,   # ALL_F32
-    "f16": 1,   # MOSTLY_F16
-    "q4_0": 2,  # MOSTLY_Q4_0
-    "q4_1": 3,  # MOSTLY_Q4_1
-    "q8_0": 7,  # MOSTLY_Q8_0
+    "f32": 0,      # ALL_F32
+    "f16": 1,      # MOSTLY_F16
+    "q4_0": 2,     # MOSTLY_Q4_0
+    "q4_1": 3,     # MOSTLY_Q4_1
+    "q4_code": 3,  # MIXED Q8_0 (token_embd + top coding layers) + Q4_1
+    "q8_0": 7,     # MOSTLY_Q8_0
 }
 
 BLOCK_Q8_0_DTYPE = np.dtype([("d", "<f2"), ("qs", "i1", (32,))])
@@ -386,7 +387,19 @@ def export_to_gguf(
     current_data_offset = 0
 
     for name, tensor in mapped_tensors:
-        ggml_type, ggml_dims, raw_bytes = serialize_gguf_tensor(tensor, quant_type=quant_type)
+        effective_qtype = quant_type
+        if quant_type == "q4_code":
+            # Keep shared token_embd/lm_head and top 3 coding decoder blocks in 8-bit Q8_0
+            top_layer_start = max(0, config.num_hidden_layers - 3)
+            is_top_coding_layer = any(
+                name.startswith(f"blk.{l_idx}.")
+                for l_idx in range(top_layer_start, config.num_hidden_layers)
+            )
+            if name in ("token_embd.weight", "output.weight") or is_top_coding_layer:
+                effective_qtype = "q8_0"
+            else:
+                effective_qtype = "q4_1"
+        ggml_type, ggml_dims, raw_bytes = serialize_gguf_tensor(tensor, quant_type=effective_qtype)
 
         # Tensor info entry: name + n_dims + dims + ggml_type + offset
         tensor_infos_buf.extend(encode_gguf_string(name))
@@ -437,4 +450,5 @@ def export_to_gguf(
         "metadata_kv_count": len(kv_entries),
         "file_size_bytes": total_bytes,
         "file_size_mb": round(total_bytes / (1024 * 1024), 4),
+        "file_size_decimal_mb": round(total_bytes / 1_000_000, 4),
     }

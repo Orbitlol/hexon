@@ -325,6 +325,7 @@ class GGUFReader:
             "gguf_version": self.version,
             "file_size_bytes": self.file_size_bytes,
             "file_size_mb": round(self.file_size_bytes / (1024 * 1024), 4),
+            "file_size_decimal_mb": round(self.file_size_bytes / 1_000_000, 4),
             "architecture": self.metadata.get("general.architecture"),
             "model_name": self.metadata.get("general.name"),
             "quantization": self.metadata.get("hexon.quantization"),
