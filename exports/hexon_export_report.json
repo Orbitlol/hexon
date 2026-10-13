@@ -123,8 +123,8 @@
     "hexon_135m_q4": {
       "path": "exports/hexon-135m-q4_0.gguf",
       "gguf_version": 3,
-      "file_size_bytes": 98362560,
-      "file_size_mb": 93.8058,
+      "file_size_bytes": 85976256,
+      "file_size_mb": 81.9933,
       "architecture": "llama",
       "model_name": "hexon-135m",
       "quantization": "q4_1",
@@ -138,12 +138,11 @@
       "num_kv_heads": 3,
       "tensor_count": 272,
       "tensor_type_distribution": {
-        "Q8_0": 1,
-        "F32": 61,
-        "Q4_1": 210
+        "Q4_1": 211,
+        "F32": 61
       },
       "total_tensor_elements": 134515008,
-      "total_tensor_bytes": 96576768
+      "total_tensor_bytes": 84190464
     }
   },
   "pytorch_mobile_exports": {
