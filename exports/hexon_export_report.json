@@ -1,0 +1,282 @@
+{
+  "training": {
+    "pipeline": "common_crawl_pretrain_plus_sft",
+    "curation_report": {
+      "raw_documents": 315,
+      "kept_documents": 266,
+      "rejected_url_or_lang": 0,
+      "rejected_boilerplate_or_short": 40,
+      "rejected_quality_heuristics": 7,
+      "rejected_duplicates": 2,
+      "total_raw_chars": 2435043,
+      "total_clean_chars": 538076,
+      "total_clean_words": 86292,
+      "sources_processed": [
+        "cc_en_head-0091.jsonl",
+        "cc_en_head-0174.jsonl",
+        "cc_pt_input.jsonl",
+        "cc_warc_after.jsonl",
+        "fineweb_fixture.jsonl",
+        "seed_tasks.jsonl",
+        "dolma_docs_000.json.gz",
+        "educational_text_chunks.json",
+        "sample-0000.warc.gz",
+        "sample-0001.warc.gz",
+        "whirlwind.warc",
+        "whirlwind.warc.wet"
+      ]
+    },
+    "pretrain_metrics": {
+      "stage": "common_crawl_base_pretrain",
+      "curation_report": {
+        "raw_documents": 266,
+        "kept_documents": 266,
+        "rejected_url_or_lang": 0,
+        "rejected_boilerplate_or_short": 0,
+        "rejected_quality_heuristics": 0,
+        "rejected_duplicates": 0,
+        "total_raw_chars": 0,
+        "total_clean_chars": 538076,
+        "total_clean_words": 86292,
+        "sources_processed": []
+      },
+      "cc_passages_used": 80,
+      "packed_sequences": 288,
+      "max_seq_len": 208,
+      "pretrain_epochs": 4,
+      "initial_loss": 6.15384104138329,
+      "final_loss": 4.96563770657494,
+      "loss_history": [
+        6.15384104138329,
+        5.5559318860371905,
+        5.2250911848885675,
+        4.96563770657494
+      ]
+    },
+    "pretrain_epochs": 4,
+    "sft_epochs": 14,
+    "sft_samples": 2064,
+    "sft_intent_groups": 60,
+    "pretrain_initial_loss": 6.15384104138329,
+    "pretrain_final_loss": 4.96563770657494,
+    "sft_initial_loss": 4.081723684264768,
+    "sft_final_loss": 0.00172,
+    "initial_loss": 6.15384104138329,
+    "final_loss": 0.00172,
+    "loss_history": [
+      6.15384104138329,
+      5.5559318860371905,
+      5.2250911848885675,
+      4.96563770657494,
+      4.081723684264768,
+      2.2182089878666784,
+      1.1358373814052152,
+      0.7286295655273622,
+      0.5872600451111794,
+      0.4787764621357764,
+      0.38904743966075683,
+      0.16250455658882856,
+      0.1093311722450439,
+      0.06824460476937314,
+      0.03456662655357392,
+      0.018131456215820844,
+      0.007341974047801247,
+      0.003132891961872848
+    ],
+    "mobile_trainable": false
+  },
+  "estimated_mobile_ram_mb": {
+    "f32_weights_mb": 10.135,
+    "f16_weights_mb": 5.067,
+    "q8_0_weights_mb": 2.692,
+    "q4_0_weights_mb": 1.425,
+    "kv_cache_fp16_mb": 0.375
+  },
+  "gguf_exports": {
+    "f16": {
+      "output_path": "exports/hexon-nano-f16.gguf",
+      "quant_type": "f16",
+      "gguf_version": 3,
+      "tensor_count": 57,
+      "metadata_kv_count": 31,
+      "file_size_bytes": 5946272,
+      "file_size_mb": 5.6708
+    },
+    "q8_0": {
+      "output_path": "exports/hexon-nano-q8_0.gguf",
+      "quant_type": "q8_0",
+      "gguf_version": 3,
+      "tensor_count": 57,
+      "metadata_kv_count": 31,
+      "file_size_bytes": 3181472,
+      "file_size_mb": 3.0341
+    },
+    "q4_0": {
+      "output_path": "exports/hexon-nano-q4_0.gguf",
+      "quant_type": "q4_0",
+      "gguf_version": 3,
+      "tensor_count": 57,
+      "metadata_kv_count": 31,
+      "file_size_bytes": 1706912,
+      "file_size_mb": 1.6278
+    },
+    "hexon_135m_q4": {
+      "path": "exports/hexon-135m-q4_0.gguf",
+      "gguf_version": 3,
+      "file_size_bytes": 85976256,
+      "file_size_mb": 81.9933,
+      "architecture": "llama",
+      "model_name": "hexon-135m",
+      "quantization": "q4_1",
+      "mobile_inference_only": true,
+      "trainable_on_device": false,
+      "vocab_size": 49152,
+      "context_length": 2048,
+      "hidden_size": 576,
+      "num_layers": 30,
+      "num_heads": 9,
+      "num_kv_heads": 3,
+      "tensor_count": 272,
+      "tensor_type_distribution": {
+        "Q4_1": 211,
+        "F32": 61
+      },
+      "total_tensor_elements": 134515008,
+      "total_tensor_bytes": 84190464
+    }
+  },
+  "pytorch_mobile_exports": {
+    "torchscript": {
+      "output_path": "exports/hexon-nano-torchscript.pt",
+      "format": "torchscript-mobile",
+      "mobile_inference_only": true,
+      "file_size_bytes": 11906184,
+      "file_size_mb": 11.3546
+    },
+    "dynamic_int8": {
+      "output_path": "exports/hexon-nano-mobile-int8.pt",
+      "format": "pytorch-dynamic-int8",
+      "quant_engine": "qnnpack",
+      "mobile_inference_only": true,
+      "file_size_bytes": 4000608,
+      "file_size_mb": 3.8153
+    }
+  },
+  "benchmarks": {
+    "gguf_q8_0": {
+      "source_path": "exports/hexon-nano-q8_0.gguf",
+      "source_format": "gguf-q8_0",
+      "parameters": 2656704,
+      "mobile_inference_locked": true,
+      "num_prompts": 4,
+      "total_tokens_generated": 191,
+      "avg_ms_per_token": 2.18,
+      "avg_tokens_per_sec": 459.51,
+      "samples": [
+        {
+          "prompt": "Who are you?",
+          "response": "My name is Hexon, a compact and friendly AI assistant built to run locally on your mobile device with fast inference and low memory.",
+          "tokens_generated": 28,
+          "latency_ms": 62.88,
+          "ms_per_token": 2.25,
+          "tokens_per_sec": 445.3,
+          "source_format": "gguf-q8_0",
+          "mobile_inference_locked": true
+        },
+        {
+          "prompt": "Do you train on my phone?",
+          "response": "Never. Hexon is pre-trained on filtered Common Crawl dumps and fine-tuned offline, then exported as a frozen GGUF file so it never trains on your phone.",
+          "tokens_generated": 42,
+          "latency_ms": 86.45,
+          "ms_per_token": 2.06,
+          "tokens_per_sec": 485.83,
+          "source_format": "gguf-q8_0",
+          "mobile_inference_locked": true
+        },
+        {
+          "prompt": "How does Hexon save memory on mobile?",
+          "response": "Under the hood, Hexon uses Grouped-Query Attention (GQA), tied token embeddings, RMSNorm, SwiGLU, and GGUF block quantization to keep RAM usage tiny.",
+          "tokens_generated": 67,
+          "latency_ms": 143.03,
+          "ms_per_token": 2.13,
+          "tokens_per_sec": 468.43,
+          "source_format": "gguf-q8_0",
+          "mobile_inference_locked": true
+        },
+        {
+          "prompt": "What export formats does Hexon support?",
+          "response": "GGUF v3 (F16, Q8_0, Q4_0) and PyTorch Mobile (TorchScript and dynamic INT8 .pt) are supported for fast, memory-mapped offline mobile inference.",
+          "tokens_generated": 54,
+          "latency_ms": 123.3,
+          "ms_per_token": 2.28,
+          "tokens_per_sec": 437.96,
+          "source_format": "gguf-q8_0",
+          "mobile_inference_locked": true
+        }
+      ]
+    },
+    "gguf_q4_0": {
+      "source_path": "exports/hexon-nano-q4_0.gguf",
+      "source_format": "gguf-q4_0",
+      "parameters": 2656704,
+      "mobile_inference_locked": true,
+      "num_prompts": 4,
+      "total_tokens_generated": 191,
+      "avg_ms_per_token": 2.25,
+      "avg_tokens_per_sec": 444.29,
+      "samples": [
+        {
+          "prompt": "Who are you?",
+          "response": "My name is Hexon, a compact and friendly AI assistant built to run locally on your mobile device with fast inference and low memory.",
+          "tokens_generated": 28,
+          "latency_ms": 62.34,
+          "ms_per_token": 2.23,
+          "tokens_per_sec": 449.13,
+          "source_format": "gguf-q4_0",
+          "mobile_inference_locked": true
+        },
+        {
+          "prompt": "Do you train on my phone?",
+          "response": "Never. Hexon is pre-trained on filtered Common Crawl dumps and fine-tuned offline, then exported as a frozen GGUF file so it never trains on your phone.",
+          "tokens_generated": 42,
+          "latency_ms": 90.8,
+          "ms_per_token": 2.16,
+          "tokens_per_sec": 462.55,
+          "source_format": "gguf-q4_0",
+          "mobile_inference_locked": true
+        },
+        {
+          "prompt": "How does Hexon save memory on mobile?",
+          "response": "Under the hood, Hexon uses Grouped-Query Attention (GQA), tied token embeddings, RMSNorm, SwiGLU, and GGUF block quantization to keep RAM usage tiny.",
+          "tokens_generated": 67,
+          "latency_ms": 146.57,
+          "ms_per_token": 2.19,
+          "tokens_per_sec": 457.13,
+          "source_format": "gguf-q4_0",
+          "mobile_inference_locked": true
+        },
+        {
+          "prompt": "What export formats does Hexon support?",
+          "response": "GGUF v3 (F16, Q8_0, Q4_0) and PyTorch Mobile (TorchScript and dynamic INT8 .pt) are supported for fast, memory-mapped offline mobile inference.",
+          "tokens_generated": 54,
+          "latency_ms": 130.19,
+          "ms_per_token": 2.41,
+          "tokens_per_sec": 414.77,
+          "source_format": "gguf-q4_0",
+          "mobile_inference_locked": true
+        }
+      ]
+    }
+  },
+  "chromadb_rag": {
+    "collection_name": "hexon_knowledge",
+    "persist_dir": "data/chromadb",
+    "embedding_function": "HexonChromaEmbeddingFunction (384-dim L2-normalized hybrid semantic)",
+    "total_indexed_chunks": 423,
+    "sources": [
+      "data/curated/common_crawl_curated.jsonl",
+      "data/curated/alpaca_knowledge.jsonl",
+      "CORE_KNOWLEDGE_DOCUMENTS"
+    ]
+  }
+}

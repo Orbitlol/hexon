@@ -1,0 +1,25 @@
+{
+  "raw_documents": 315,
+  "kept_documents": 266,
+  "rejected_url_or_lang": 0,
+  "rejected_boilerplate_or_short": 40,
+  "rejected_quality_heuristics": 7,
+  "rejected_duplicates": 2,
+  "total_raw_chars": 2435043,
+  "total_clean_chars": 538076,
+  "total_clean_words": 86292,
+  "sources_processed": [
+    "cc_en_head-0091.jsonl",
+    "cc_en_head-0174.jsonl",
+    "cc_pt_input.jsonl",
+    "cc_warc_after.jsonl",
+    "fineweb_fixture.jsonl",
+    "seed_tasks.jsonl",
+    "dolma_docs_000.json.gz",
+    "educational_text_chunks.json",
+    "sample-0000.warc.gz",
+    "sample-0001.warc.gz",
+    "whirlwind.warc",
+    "whirlwind.warc.wet"
+  ]
+}
