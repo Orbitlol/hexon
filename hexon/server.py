@@ -35,6 +35,13 @@ def get_rag() -> HexonChromaRAG:
 
 def get_engine(quant: str) -> HexonMobileEngine:
     quant = quant.lower()
+    if quant in ("code", "hexon-code"):
+        if "code" not in ENGINES:
+            gguf_path = EXPORTS_DIR / "hexon-code.gguf"
+            if not gguf_path.exists():
+                gguf_path = EXPORTS_DIR / "hexon-135m-q4_0.gguf"
+            ENGINES["code"] = HexonMobileEngine.from_file(gguf_path, rag=get_rag())
+        return ENGINES["code"]
     if quant == "135m":
         if "135m" not in ENGINES:
             gguf_path = EXPORTS_DIR / "hexon-135m-q4_0.gguf"
@@ -185,17 +192,18 @@ INDEX_HTML = """<!DOCTYPE html>
         <div class="chat-box" id="chat"></div>
         <div class="controls">
           <select id="quant">
-            <option value="135m" selected>Hexon-135M GGUF (93.8 MiB • 134.5M Params)</option>
+            <option value="code" selected>Hexon-Code GGUF (103.2 MB • 134.5M Params • Coding + RAG)</option>
+            <option value="135m">Hexon-135M GGUF (82.0 MiB • 134.5M Params)</option>
             <option value="q8_0">Hexon-Nano Q8_0 (3.04 MB • 2.56M Params)</option>
             <option value="q4_0">Hexon-Nano Q4_0 (1.63 MB • 2.56M Params)</option>
             <option value="f16">Hexon-Nano F16 (5.67 MB • 2.56M Params)</option>
           </select>
           <label style="display:flex;align-items:center;gap:6px;font-size:13px;background:#0f172a;padding:6px 10px;border-radius:8px;border:1px solid var(--border);">
-            <input type="checkbox" id="use_rag" checked style="flex:0;" /> ChromaDB RAG
+            <input type="checkbox" id="use_rag" checked style="flex:0;" /> ChromaDB RAG (200-300w/chunk)
           </label>
         </div>
         <div class="controls">
-          <input id="prompt" type="text" placeholder="Ask Hexon any question..." value="What processor, GPU, and battery does the Poco M3 have?" />
+          <input id="prompt" type="text" placeholder="Ask Hexon-Code any coding or general question..." value="Write a Python function to check if a number is prime." />
           <button onclick="sendPrompt()">Run GGUF + RAG</button>
         </div>
       </div>
@@ -208,9 +216,15 @@ INDEX_HTML = """<!DOCTYPE html>
           </thead>
           <tbody>
             <tr>
+              <td><code>hexon-code.gguf</code></td>
+              <td>GGUF v3 (Hexon-Code Q4_CODE)</td>
+              <td>103.2 MB</td>
+              <td><a class="dl" href="/download/hexon-code.gguf">Download</a></td>
+            </tr>
+            <tr>
               <td><code>hexon-135m-q4_0.gguf</code></td>
               <td>GGUF v3 (135M Compositional)</td>
-              <td>93.81 MiB</td>
+              <td>82.0 MiB</td>
               <td><a class="dl" href="/download/hexon-135m-q4_0.gguf">Download</a></td>
             </tr>
             <tr>
@@ -327,7 +341,9 @@ class HexonHTTPHandler(BaseHTTPRequestHandler):
             return
 
         if self.path == "/api/inspect":
-            target = EXPORTS_DIR / "hexon-135m-q4_0.gguf"
+            target = EXPORTS_DIR / "hexon-code.gguf"
+            if not target.exists():
+                target = EXPORTS_DIR / "hexon-135m-q4_0.gguf"
             if not target.exists():
                 target = EXPORTS_DIR / "hexon-nano-q4_0.gguf"
             reader = GGUFReader(target)
@@ -335,6 +351,7 @@ class HexonHTTPHandler(BaseHTTPRequestHandler):
             info["chromadb_rag"] = {
                 "collection": get_rag().collection_name,
                 "indexed_chunks": get_rag().count(),
+                "chunk_word_stats": get_rag().chunk_word_count_stats(),
                 "embedding_dim": 384,
             }
             self._send_json(info)
