@@ -41,6 +41,12 @@ DEFAULT_CORPORA = [
     "data/curated/alpaca_knowledge.jsonl",
     "data/curated/common_crawl_curated.jsonl",
     "exports/hexon-nano-sft-dataset.jsonl",
+    # Anything added to training later has to be listed here too, or a future
+    # run can quietly train on the benchmark and score it as held-out.
+    "data/sft/hexon_15_sft.jsonl",
+    "data/knowledge/hexon_core_science.jsonl",
+    "data/knowledge/hexon_core_tech.jsonl",
+    "data/knowledge/hexon_mined_docs.jsonl",
 ]
 
 

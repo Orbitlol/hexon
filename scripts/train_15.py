@@ -182,28 +182,30 @@ def build_examples(
     return examples
 
 
-def make_batches(
-    examples: Sequence[Tuple[List[int], List[int]]],
+def make_index_batches(
+    n: int,
+    lengths: Sequence[int],
     batch_size: int,
     seed: int,
-    pad_id: int,
-):
-    """Length-bucketed batches to cut padding waste."""
+) -> List[List[int]]:
+    """Length-bucketed batches of example indices.
+
+    Only batch_size=1 is exercised: the cached trunk hidden states have
+    per-example sequence lengths, and padding them would throw away most of
+    the point of caching.
+    """
     rng = random.Random(seed)
-    idx = list(examples)
-    rng.shuffle(idx)
-    idx.sort(key=lambda x: len(x[0]))
-    batches = []
-    for start in range(0, len(idx), batch_size):
-        chunk = idx[start : start + batch_size]
-        max_len = max(len(x[0]) for x in chunk)
-        inputs = torch.tensor(
-            [x[0] + [pad_id] * (max_len - len(x[0])) for x in chunk], dtype=torch.long
-        )
-        labels = torch.tensor(
-            [x[1] + [-100] * (max_len - len(x[1])) for x in chunk], dtype=torch.long
-        )
-        batches.append((inputs, labels))
+    order = list(range(n))
+    rng.shuffle(order)
+    # Mild length bucketing: sort within windows so neighbouring batches have
+    # similar cost, while still shuffling the global order each epoch.
+    window = max(batch_size * 8, 16)
+    grouped: List[int] = []
+    for start in range(0, len(order), window):
+        chunk = order[start : start + window]
+        chunk.sort(key=lambda i: lengths[i])
+        grouped.extend(chunk)
+    batches = [grouped[s : s + batch_size] for s in range(0, len(grouped), batch_size)]
     rng.shuffle(batches)
     return batches
 
@@ -213,12 +215,54 @@ def make_batches(
 # ---------------------------------------------------------------------------
 
 
+def precompute_trunk(
+    model: HexonForCausalLM,
+    examples: Sequence[Tuple[List[int], List[int]]],
+    grad_from_layer: int,
+) -> List[Dict[str, torch.Tensor]]:
+    """Run the frozen trunk once and cache its hidden states.
+
+    The trunk is frozen for the whole run, so its output for a given example is
+    identical on every epoch. Computing it once removes 28 of 48 layers from
+    every training step, which on 2 CPU cores is the difference between this
+    finishing in an hour and finishing in three.
+    """
+    cached: List[Dict[str, torch.Tensor]] = []
+    model.eval()
+    with torch.no_grad():
+        for ids, _ in examples:
+            x = torch.tensor([ids], dtype=torch.long)
+            seq_len = x.shape[1]
+            position_ids = torch.arange(seq_len, dtype=torch.long).unsqueeze(0)
+            hidden = model.embed_tokens(x)
+            cos, sin = model.rotary_emb(hidden, position_ids)
+            mask = model._build_causal_mask(
+                q_len=seq_len, kv_len=seq_len, device=hidden.device, dtype=hidden.dtype
+            )
+            for layer in model.layers[:grad_from_layer]:
+                hidden, _ = layer(hidden, cos=cos, sin=sin, attention_mask=mask)
+            # fp16 halves the cache footprint; it is cast back on use.
+            cached.append(
+                {"hidden": hidden.half(), "cos": cos, "sin": sin, "mask": mask}
+            )
+    model.train()
+    return cached
+
+
 def forward_tail(
     model: HexonForCausalLM,
     input_ids: torch.Tensor,
     grad_from_layer: int,
+    return_hidden: bool = False,
 ) -> torch.Tensor:
-    """Run the full stack, tracking gradients only from `grad_from_layer` on."""
+    """Run the full stack, tracking gradients only from `grad_from_layer` on.
+
+    With `return_hidden` the final norm is applied but the LM head is skipped,
+    so the caller can run the head on only the supervised positions. That
+    matters a lot on CPU: materialising [seq_len, vocab_size] logits for every
+    position costs several hundred MB, and in a grounded prompt most positions
+    are masked-out context tokens that contribute no loss.
+    """
     bsz, seq_len = input_ids.shape
     position_ids = torch.arange(seq_len, dtype=torch.long).unsqueeze(0).expand(bsz, -1)
     hidden = model.embed_tokens(input_ids)
@@ -235,7 +279,31 @@ def forward_tail(
         hidden, _ = layer(hidden, cos=cos, sin=sin, attention_mask=mask)
 
     hidden = model.norm(hidden)
+    if return_hidden:
+        return hidden
     return model.lm_head(hidden)
+
+
+def sparse_ce_loss(
+    model: HexonForCausalLM,
+    hidden: torch.Tensor,
+    labels: torch.Tensor,
+) -> torch.Tensor:
+    """Cross-entropy over only the supervised positions.
+
+    Mathematically the same as computing logits everywhere and masking, but it
+    keeps the [seq_len, vocab_size] logit tensor from ever existing.
+    """
+    # Predict token t+1 from position t.
+    h = hidden[:, :-1, :]
+    y = labels[:, 1:]
+    sel = y != -100
+    if not bool(sel.any()):
+        return hidden.sum() * 0.0
+    h_sel = h[sel]            # [N, hidden]
+    y_sel = y[sel]            # [N]
+    logits = model.lm_head(h_sel)
+    return F.cross_entropy(logits, y_sel)
 
 
 def main() -> int:
@@ -251,17 +319,22 @@ def main() -> int:
     ap.add_argument("--weight-decay", type=float, default=0.01)
     ap.add_argument("--anchor-weight", type=float, default=0.01,
                     help="L2 pull back toward hexon-1.2 for the pre-existing trainable layers.")
-    ap.add_argument("--max-seq-len", type=int, default=640)
+    ap.add_argument("--max-seq-len", type=int, default=512)
     ap.add_argument("--grad-clip", type=float, default=1.0)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--out", default="exports/hexon-1.5.gguf")
     ap.add_argument("--save-pt", default="", help="Optional fp16 checkpoint path.")
+    ap.add_argument("--checkpoint", default="/tmp/hexon15_ckpt.pt",
+                    help="Per-epoch fp16 checkpoint so an OOM cannot lose the run.")
     args = ap.parse_args()
 
     torch.manual_seed(args.seed)
     random.seed(args.seed)
-    torch.set_num_threads(max(1, torch.get_num_threads()))
+    # torch defaults to 1 thread in this sandbox even with 2 cores present,
+    # which roughly halves throughput.
+    torch.set_num_threads(max(2, torch.get_num_threads()))
+    print(f"   torch threads: {torch.get_num_threads()}")
 
     t0 = time.time()
     print(f"== building hexon-1.5 from {args.base} ==")
@@ -303,8 +376,16 @@ def main() -> int:
         lr=args.lr, weight_decay=args.weight_decay, betas=(0.9, 0.95),
     )
 
-    all_batches = [make_batches(examples, args.batch_size, args.seed + ep, pad_id)
-                   for ep in range(args.epochs)]
+    print("== precomputing frozen trunk (once) ==")
+    t_cache = time.time()
+    lengths = [len(x[0]) for x in examples]
+    cached = precompute_trunk(model, examples, args.train_from_layer)
+    print(f"   cached {len(cached)} trunk states in {time.time()-t_cache:.0f}s")
+
+    all_batches = [
+        make_index_batches(len(examples), lengths, args.batch_size, args.seed + ep)
+        for ep in range(args.epochs)
+    ]
     total_steps = sum(len(b) for b in all_batches)
     step = 0
 
@@ -312,18 +393,24 @@ def main() -> int:
     for epoch, batches in enumerate(all_batches):
         model.train()
         epoch_loss, n = 0.0, 0
-        for input_ids, labels in batches:
+        for batch_idx in batches:
+            if len(batch_idx) != 1:
+                raise ValueError("cached-trunk training requires batch_size=1")
+            i = batch_idx[0]
+            cache = cached[i]
+            hidden = cache["hidden"].float()
+            cos, sin, mask = cache["cos"], cache["sin"], cache["mask"]
+            labels = torch.tensor([examples[i][1]], dtype=torch.long)
+
             progress = step / max(1, total_steps - 1)
             lr = args.min_lr + 0.5 * (args.lr - args.min_lr) * (1 + math.cos(math.pi * progress))
             for pg in opt.param_groups:
                 pg["lr"] = lr
 
-            logits = forward_tail(model, input_ids, args.train_from_layer)
-            loss = F.cross_entropy(
-                logits[:, :-1, :].reshape(-1, logits.size(-1)),
-                labels[:, 1:].reshape(-1),
-                ignore_index=-100,
-            )
+            for layer in model.layers[args.train_from_layer:]:
+                hidden, _ = layer(hidden, cos=cos, sin=sin, attention_mask=mask)
+            hidden = model.norm(hidden)
+            loss = sparse_ce_loss(model, hidden, labels)
 
             if anchor_ref:
                 anchor = None
@@ -350,6 +437,24 @@ def main() -> int:
             if step % 25 == 0 or step == 1:
                 print(f"   step {step}/{total_steps} loss={float(loss.detach()):.4f} lr={lr:.2e}")
         print(f"   epoch {epoch+1}/{args.epochs} mean_loss={epoch_loss/max(1,n):.4f}")
+
+        # Checkpoint every epoch. This job runs close to the sandbox memory
+        # ceiling, and losing eight epochs to a kill is not recoverable.
+        if args.checkpoint:
+            ckpt = Path(args.checkpoint)
+            ckpt.parent.mkdir(parents=True, exist_ok=True)
+            torch.save(
+                {
+                    "config": model.config.to_dict(),
+                    "state_dict": {
+                        k: v.detach().half() for k, v in model.state_dict().items()
+                    },
+                    "epoch": epoch + 1,
+                    "mean_loss": epoch_loss / max(1, n),
+                },
+                str(ckpt),
+            )
+            print(f"   checkpoint -> {ckpt}")
 
     print(f"   training took {time.time()-t0:.0f}s")
 

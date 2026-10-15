@@ -6,3 +6,7 @@ __pycache__/
 build/
 dist/
 .venv/
+
+# hexon-1.5 is 136.48 MiB and GitHub rejects files over 100 MiB, so it is
+# published as a release asset instead of being committed here.
+exports/hexon-1.5.gguf

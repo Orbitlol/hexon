@@ -26,6 +26,12 @@ By design, **Hexon never trains on the mobile device**:
 | `hexon-micro` | 8 | 384 | 1024 | 6 / 2 | 1024 | 14.9M | ~15.8 MB | ~8.5 MB |
 | `hexon-mobile-35m` | 12 | 512 | 1408 | 8 / 2 | 2048 | 41.9M | ~44.5 MB | ~23.8 MB |
 | `hexon-mobile-125m` | 16 | 768 | 2048 | 12 / 4 | 2048 | 121.6M | ~129 MB | ~69 MB |
+| `hexon-135m` / `hexon-code` | 30 | 576 | 1536 | 9 / 3 | 2048 | 134.5M | ~143 MB | ~103 MB |
+| **`hexon-1.5`** | **48** | 576 | 1536 | 9 / 3 | 2048 | **198.2M** | ~211 MB | **~143 MB** (`q4_code`) |
+
+`hexon-1.5` adds depth only — same width, same 49152 vocabulary, 18 extra
+decoder blocks on top of `hexon-1.2`'s 30. See [How hexon-1.5 was
+built](#how-hexon-15-was-built).
 
 ---
 
@@ -35,6 +41,9 @@ A trained working `hexon-nano` checkpoint and its mobile export files are includ
 
 | File | Format | Quantization | Size | Purpose |
 | :--- | :--- | :--- | :---: | :--- |
+| `exports/hexon-1.5.gguf` | **GGUF v3** | `Q4_CODE` | **136.48 MiB** | **Flagship. 48 layers / 198.2M params, depth-expanded from hexon-1.2. Ships as a release asset — see note below.** |
+| `exports/hexon-1.2.gguf` | **GGUF v3** | `Q4_CODE` | **98.42 MiB** | Prior flagship, 30 layers / 134.5M params |
+| `exports/hexon-code.gguf` | **GGUF v3** | `Q4_CODE` | **98.42 MiB** | Coding-heavy 30-layer variant |
 | `exports/hexon-135m-q4_0.gguf` | **GGUF v3** | 4-bit/8-bit (`Q4_1`/`Q8_0`) | **93.81 MiB** | **Flagship 135M (134.5M params) compositional mobile AI + ChromaDB RAG** |
 | `exports/hexon-nano-q4_0.gguf` | **GGUF v3** | 4-bit block (`Q4_0`) | **1.63 MB** | Ultra-compact mobile GGUF inference (SFT) |
 | `exports/hexon-nano-q8_0.gguf` | **GGUF v3** | 8-bit block (`Q8_0`) | **3.04 MB** | High-accuracy mobile GGUF inference (SFT) |
@@ -46,6 +55,102 @@ A trained working `hexon-nano` checkpoint and its mobile export files are includ
 | `exports/hexon-nano-checkpoint.pt` | **PyTorch** | `FP16` | **5.37 MB** | Offline SFT server checkpoint |
 
 ---
+
+> **Why `hexon-1.5.gguf` is not committed to the repository.** GitHub rejects
+> individual files larger than 100 MiB. `hexon-1.5.gguf` is 136.48 MiB, so it is
+> published as an asset on the
+> [release page](https://github.com/Orbitlol/hexon/releases) instead, and
+> mirrored on Google Drive. `hexon-1.2.gguf` and `hexon-code.gguf` are 98.42 MiB
+> each and are committed directly.
+
+---
+
+## Evaluation
+
+Honest numbers live in **[`eval/RESULTS.md`](eval/RESULTS.md)**. Summary of the
+50-question held-out set, with ChromaDB grounding enabled:
+
+| Model | Accuracy | Hallucination flags | Grounded accuracy | Ungrounded accuracy |
+| :--- | :---: | :---: | :---: | :---: |
+| hexon-135m-q4_0 | 0.720 | 0.000 | 0.735 | 0.688 |
+| hexon-code | 0.720 | 0.000 | 0.765 | 0.625 |
+| hexon-1.2 | 0.660 | 0.000 | 0.676 | 0.625 |
+| **hexon-1.5** | **0.760** | 0.040 | **0.853** | 0.562 |
+
+Three things worth knowing before quoting any of it:
+
+1. **The old 8-item keyword check was not a benchmark.** 4 of its 8 questions
+   appear verbatim in training corpora, and all 8 were part of hexon-1.2's
+   fine-tune. hexon-1.2's headline 8/8 score was largely memorisation of the
+   test set — on held-out questions it is the *weakest* of the four models.
+2. **The hallucination-reduction target has not been met as a model
+   improvement.** The drop in hallucination flags came from rebuilding the
+   ChromaDB knowledge base, not from hexon-1.5. With 50 items, one flag is
+   0.020, so the 0.000-vs-0.040 spread is within noise.
+3. **Scoring is keyword-based**, so accuracy is a floor rather than a grade,
+   and hallucination flags only catch wrong answers that someone anticipated.
+
+Reproduce with:
+
+```bash
+python3 -m pip install --break-system-packages --target /tmp/pydeps \
+  "torch==2.2.2" "numpy<2" "chromadb>=1.0.0"
+PYTHONPATH=/tmp/pydeps:. python3 scripts/run_eval.py \
+  --models hexon-1.5 hexon-1.2 hexon-code hexon-135m-q4_0 \
+  --configs rag-on --out-dir eval/results_v2
+```
+
+`run_eval.py` refuses to stay quiet about contamination: it runs a Jaccard
+check of every eval question against every training corpus on every run.
+
+---
+
+## How hexon-1.5 was built
+
+1. **Depth expansion, not retraining.** `scripts/train_15.py` loads
+   `hexon-1.2.gguf`, keeps its 30 layers and adds 18 more. Each new block has
+   its `o_proj` and `down_proj` weights set to zero; because Hexon is pre-norm
+   with bias-free projections, a zeroed output projection makes the block an
+   identity function. Verified: before training, the 48-layer model's logits
+   match hexon-1.2's **exactly** (max absolute difference `0.0`).
+2. **Grounded SFT.** `scripts/build_15_sft.py` produces 126 records (55 facts,
+   33 coding, 20 chat, 10 calibrated refusals, 8 multi-turn). Prompts reproduce
+   `HexonChromaRAG.build_rag_prompt` byte for byte and are grounded in the real
+   ChromaDB chunks, so training matches inference.
+3. **Cheap training on CPU.** The frozen 28-layer trunk is precomputed once and
+   cached, gradients flow only through the trainable tail, and cross-entropy is
+   computed on supervised positions only (never a full
+   `[seq_len, vocab_size]` logit tensor). 8 epochs over 126 examples take about
+   17 minutes on 2 cores.
+
+## Knowledge base
+
+`data/chromadb` holds 228 chunks, every one 200–300 words
+(`CHUNK_SCHEMA_VERSION = v2_200_300_words`). Rebuild with:
+
+```bash
+PYTHONPATH=/tmp/pydeps:. python3 scripts/build_knowledge_base.py
+```
+
+Composition after the rebuild:
+
+| Source | Chunks |
+| :--- | :---: |
+| `mined_pypi` — filtered PyPI package documentation | 78 |
+| `stanford_alpaca` | 58 |
+| `mined_npm` — filtered npm READMEs | 42 |
+| `hexon_core_authored` — this project's own reference corpus | 29 |
+| `coding_reference`, `hexon_docs`, `encyclopedia`, others | 21 |
+
+The rebuild deleted **146 raw Common Crawl chunks** that made up 67% of the old
+index. Sampled, they contained invoice-factoring teleconference spam and 9/11
+conspiracy blog posts; with them in place, enabling RAG made every model
+*worse* than running with no retrieval at all. Removing them and adding curated
+content lifted held-out accuracy by 0.14–0.20 per model.
+
+The retrieval embedder is a hashed bag-of-words model, so its width sets its
+ceiling. `DEFAULT_EMBEDDING_DIM` in `hexon/rag.py` was raised 384 → 2048, which
+took measured recall@1 from 0.318 to 0.409 on 88 labelled question/chunk pairs.
 
 ## Quickstart
 
@@ -125,8 +230,30 @@ hexon/
 └── cli.py             # CLI (`curate`, `pretrain`, `sft`, `train`, `export`, `inspect`, `generate`, `build-all`)
 data/
 ├── raw_cc/            # Raw Common Crawl WARC/WET/JSONL snapshots
-└── curated/           # Cleaned & deduplicated Common Crawl corpus (`common_crawl_curated.jsonl`)
+├── curated/           # Cleaned & deduplicated Common Crawl corpus (`common_crawl_curated.jsonl`)
+├── knowledge/         # hexon-1.5 corpus: authored reference + mined PyPI/npm docs
+│   ├── hexon_core_science.jsonl
+│   ├── hexon_core_tech.jsonl
+│   └── hexon_mined_docs.jsonl
+├── sft/
+│   └── hexon_15_sft.jsonl   # 126-record grounded SFT set for hexon-1.5
+└── chromadb/          # 228 x 200-300 word chunks (hexon_knowledge collection)
 exports/               # Pre-trained base + SFT checkpoints & GGUF/TorchScript export files
+scripts/
+├── run_eval.py            # Score exported models against the held-out benchmark
+├── rescore.py             # Re-apply the scorer to saved responses (no regeneration)
+├── build_knowledge_base.py    # Rebuild ChromaDB from curated sources
+├── build_core_corpus.py       # Author science/geography/history/maths reference
+├── build_tech_corpus.py       # Author computing/Python/JavaScript reference
+├── mine_knowledge.py          # Mine + filter PyPI and npm documentation
+├── build_15_sft.py            # Build the grounded hexon-1.5 SFT set
+├── train_15.py                # Depth-expand hexon-1.2 into hexon-1.5 and train
+└── export_checkpoint.py       # Export any training epoch to GGUF
+eval/
+├── heldout_eval.json   # The benchmark: 50 held-out + 8 legacy + 3 multi-turn
+├── RESULTS.md          # Full measured results and their caveats
+├── results/            # Raw responses, pre-rebuild knowledge base
+└── results_v2/         # Raw responses, post-rebuild knowledge base
 tests/
-└── test_hexon.py      # 11 unit & integration tests (curation, pre-training, SFT, GGUF v3, multi-turn chat)
+└── test_hexon.py      # 14 unit & integration tests (curation, pre-training, SFT, GGUF v3, multi-turn chat)
 ```

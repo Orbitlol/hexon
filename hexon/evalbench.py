@@ -126,6 +126,43 @@ def context_covers_item(item: Dict[str, Any], chunks: Sequence[Dict[str, Any]]) 
     return True
 
 
+# A `must_not` hit only counts as a hallucination when the forbidden term is
+# asserted. Good answers routinely name the wrong answer in order to rule it
+# out ("It is not Toronto or Montreal", "should not be confused with the yuan"),
+# and flagging those would punish exactly the careful, contrastive answers the
+# models should be giving. So a match inside a negation window is discounted.
+_NEGATION_CUE = re.compile(
+    r"\b(?:not|no|never|nor|rather\s+than|instead\s+of|unlike|as\s+opposed\s+to|"
+    r"however|but|although|though|whereas|confus\w+|mistaken\w+|incorrect|"
+    r"wrong|false|disput\w+|arguabl\w+|technically|closest|closest\s+to|"
+    r"rival|compromise|versus|vs\.?|different\s+from|as\s+well\s+as)\b",
+    re.IGNORECASE,
+)
+_NEGATION_WINDOW = 90
+
+
+def _must_not_hits(text: str, must_not: Sequence[str]) -> List[str]:
+    """Return must_not matches that are not inside a negation/caveat window."""
+    hits: List[str] = []
+    for pat in must_not:
+        try:
+            matches = list(re.finditer(pat, text, flags=re.IGNORECASE))
+        except re.error:
+            continue
+        for m in matches:
+            # Caveats can sit on either side of the mention:
+            # "It is not Toronto or Montreal" (before) and
+            # "Antarctica is technically the largest desert" (after).
+            lo = max(0, m.start() - _NEGATION_WINDOW)
+            hi = min(len(text), m.end() + _NEGATION_WINDOW)
+            window = text[lo : m.start()] + " " + text[m.end() : hi]
+            if _NEGATION_CUE.search(window):
+                continue
+            hits.append(m.group(0))
+            break  # one hit per pattern is enough
+    return hits
+
+
 def score_item(item: Dict[str, Any], response: str) -> Dict[str, Any]:
     """Score one response against one eval item.
 
@@ -145,14 +182,7 @@ def score_item(item: Dict[str, Any], response: str) -> Dict[str, Any]:
     correct = all(groups_matched) if groups_matched else False
 
     must_not: List[str] = item.get("must_not") or []
-    hall_matches: List[str] = []
-    for pat in must_not:
-        try:
-            m = re.search(pat, low, flags=re.IGNORECASE)
-        except re.error:
-            m = None
-        if m:
-            hall_matches.append(m.group(0))
+    hall_matches: List[str] = _must_not_hits(low, must_not)
 
     unsupported: List[str] = []
     if item.get("check_unsupported_number"):

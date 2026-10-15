@@ -125,8 +125,11 @@ class HexonMobileEngine:
         """
         is_large_model = self.model.config.vocab_size >= 16000
         if use_rag is None:
-            # Hexon-Code leans heavily on ChromaDB by default
-            use_rag = True if self.model.config.model_name == "hexon-code" else False
+            # Every shipped Hexon at this scale was trained to answer from
+            # retrieved ChromaDB context, so grounding is the default for all
+            # of them. Only the small vocab models (hexon-nano and friends)
+            # run bare, because their tokenizer cannot use the grounding ids.
+            use_rag = is_large_model
 
         retrieved_chunks: List[Dict[str, Any]] = []
         effective_prompt = user_prompt
