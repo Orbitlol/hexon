@@ -132,6 +132,12 @@ def main() -> int:
                     f"hall={s['hallucination_rate']:.3f} "
                     f"unsupported={s['unsupported_number_items']}"
                 )
+                if use_rag:
+                    print(
+                        f"      {'':<22} grounded={s['grounded_items']}/{s['items']} "
+                        f"acc_grounded={s['accuracy_grounded']:.3f} "
+                        f"acc_ungrounded={s['accuracy_ungrounded']:.3f}"
+                    )
             if "multiturn" in res:
                 mt = res["multiturn"]
                 print(

@@ -105,6 +105,27 @@ def find_unsupported_numbers(response: str, question: str, reference: str) -> Li
     return sorted(out)
 
 
+def context_covers_item(item: Dict[str, Any], chunks: Sequence[Dict[str, Any]]) -> bool:
+    """True when the retrieved ChromaDB context already contains the answer.
+
+    An item whose answer is sitting in the retrieved context is a *grounded*
+    item: getting it right mostly demonstrates retrieval plus faithful copying,
+    not knowledge. Splitting the score by this flag is what keeps the RAG-on
+    numbers honest once the knowledge base grows to cover the test domains.
+    """
+    if not chunks:
+        return False
+    blob = "\n".join(str(c.get("text", "")) for c in chunks).lower()
+    groups: List[List[str]] = item.get("must_include") or []
+    if not groups:
+        return False
+    for group in groups:
+        patterns = group if isinstance(group, list) else [group]
+        if not _matches_any(patterns, blob):
+            return False
+    return True
+
+
 def score_item(item: Dict[str, Any], response: str) -> Dict[str, Any]:
     """Score one response against one eval item.
 
@@ -160,6 +181,19 @@ def score_item(item: Dict[str, Any], response: str) -> Dict[str, Any]:
 # --------------------------------------------------------------------------
 
 
+def _rate(
+    recs: Sequence[Dict[str, Any]],
+    field: str,
+    keyed_by: Optional[str] = None,
+    want: bool = True,
+) -> float:
+    """Mean of a boolean field over ``recs``, optionally filtered on another flag."""
+    subset = [r for r in recs if r.get(keyed_by) is want] if keyed_by else list(recs)
+    if not subset:
+        return 0.0
+    return round(sum(1 for r in subset if r.get(field)) / len(subset), 4)
+
+
 def run_eval(
     engine: Any,
     model_label: str,
@@ -176,6 +210,7 @@ def run_eval(
     per_set: Dict[str, List[Dict[str, Any]]] = {}
     for set_id, item in iter_items(ev, set_ids):
         question = item["question"]
+        out: Dict[str, Any] = {}
         try:
             out = engine.reply(
                 question,
@@ -189,6 +224,8 @@ def run_eval(
         except Exception as exc:  # pragma: no cover - defensive
             response, tokens, latency = f"<error: {exc}>", 0, 0.0
 
+        chunks = out.get("retrieved_chunks", []) if isinstance(out, dict) else []
+        covered = context_covers_item(item, chunks)
         sc = score_item(item, response)
         rec = {
             "id": item["id"],
@@ -198,6 +235,8 @@ def run_eval(
             "response": response,
             "tokens_generated": tokens,
             "latency_ms": round(latency, 1),
+            "retrieved": len(chunks),
+            "context_covers_answer": covered,
             **sc,
         }
         per_set.setdefault(set_id, []).append(rec)
@@ -225,6 +264,9 @@ def run_eval(
             ),
             "unsupported_number_items": sum(1 for r in recs if r["unsupported_numbers"]),
             "empty_responses": sum(1 for r in recs if r["empty"]),
+            "grounded_items": sum(1 for r in recs if r["context_covers_answer"]),
+            "accuracy_grounded": _rate(recs, "correct", keyed_by="context_covers_answer", want=True),
+            "accuracy_ungrounded": _rate(recs, "correct", keyed_by="context_covers_answer", want=False),
             "mean_tokens": round(sum(r["tokens_generated"] for r in recs) / n, 1) if n else 0.0,
             "mean_latency_ms": round(sum(r["latency_ms"] for r in recs) / n, 1) if n else 0.0,
             "records": recs,

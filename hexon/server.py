@@ -18,9 +18,10 @@ from urllib.parse import unquote
 
 from .gguf_runtime import GGUFReader
 from .inference import HexonMobileEngine
-from .rag import HexonChromaRAG
-
-
+from .rag import (
+    DEFAULT_EMBEDDING_DIM,
+    HexonChromaRAG,
+)
 EXPORTS_DIR = Path("exports")
 ENGINES: Dict[str, HexonMobileEngine] = {}
 RAG_ENGINE: HexonChromaRAG | None = None
@@ -352,7 +353,7 @@ class HexonHTTPHandler(BaseHTTPRequestHandler):
                 "collection": get_rag().collection_name,
                 "indexed_chunks": get_rag().count(),
                 "chunk_word_stats": get_rag().chunk_word_count_stats(),
-                "embedding_dim": 384,
+                "embedding_dim": DEFAULT_EMBEDDING_DIM,
             }
             self._send_json(info)
             return
