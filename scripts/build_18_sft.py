@@ -162,14 +162,20 @@ def derive_answer(text: str) -> Optional[str]:
             if take:
                 break
             continue
-        if take and words + sw > 110:
+        # Short targets. The 6,295-record run used 110-word answers and the
+        # model learned to ramble, looping until it hit the token cap and
+        # inventing numbers along the way, which the eval counts as
+        # hallucinations. hexon-1.2 scores 0.680 on 7-token answers.
+        if take and words + sw > 34:
             break
         take.append(s)
         words += sw
-        if words >= 38:
+        if words >= 22:
+            break
+        if len(take) >= 2:
             break
 
-    if not take or words < 20:
+    if not take or words < 10:
         return None
     ans = " ".join(take).strip()
     if answer_quality(ans) < 0.38:
@@ -224,6 +230,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-examples", type=int, default=40000)
     ap.add_argument("--per-chunk", type=int, default=3)
+    ap.add_argument("--seed-repeat", type=int, default=6,
+                    help="how many times to repeat the hand-written seeds")
     ap.add_argument("--refusal-fraction", type=float, default=0.12)
     ap.add_argument("--seed", type=int, default=18)
     ap.add_argument("--out", default=str(OUT))
@@ -334,9 +342,14 @@ def main() -> int:
                 if is_banned(rec.get("user", "")[:120]):
                     continue
                 rec["source"] = "seed_15"
-                records.append(rec)
+                # Hand-written records are the only reliably well-formed
+                # targets in the set, so repeat them rather than let the
+                # machine-generated bulk drown them out.
+                for _ in range(max(1, args.seed_repeat)):
+                    records.append(dict(rec))
                 n_seed += 1
-        print(f"mixed in {n_seed} hand-written seed records")
+        print(f"mixed in {n_seed} hand-written seed records "
+              f"(x{args.seed_repeat} = {n_seed * args.seed_repeat} rows)")
 
     rng.shuffle(records)
 

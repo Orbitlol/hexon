@@ -1,0 +1,19 @@
+{
+  "model": "hexon-1.8",
+  "base": "exports/hexon-1.2.gguf",
+  "total_layers": 32,
+  "sft": "/home/user/hexon/data/sft/hexon_18_sft.jsonl",
+  "layers_per_stage": 2,
+  "epochs_per_stage": 3,
+  "quant": "q4_deep",
+  "export": {
+    "output_path": "/home/user/hexon/exports/hexon-1.8.gguf",
+    "quant_type": "q4_deep",
+    "gguf_version": 3,
+    "tensor_count": 290,
+    "metadata_kv_count": 33,
+    "file_size_bytes": 102993248,
+    "file_size_mb": 98.222,
+    "file_size_decimal_mb": 102.9932
+  }
+}

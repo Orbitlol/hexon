@@ -80,6 +80,8 @@ def train_stage(
     seed: int,
     tag: str,
     cache_chunk: int = 400,
+    anchor_weight: float = 0.0,
+    stats_base_layers: int = 0,
 ) -> float:
     """Train layers [stage_start, stage_end) with the lower trunk frozen."""
     trainable: List[torch.nn.Parameter] = []
@@ -92,6 +94,18 @@ def train_stage(
 
     opt = torch.optim.AdamW(trainable, lr=lr, weight_decay=0.02,
                             betas=(0.9, 0.95))
+
+    # Anchor the inherited layers to their pre-trained values. Without this the
+    # model drifts off hexon-1.2's distribution and generation degenerates into
+    # repetition loops; hexon-1.5 used anchor_weight 0.01 for the same reason.
+    anchor_ref: Dict[str, torch.Tensor] = {}
+    for idx in range(stage_start, min(stage_end, stats_base_layers)):
+        for name, p in model.layers[idx].named_parameters():
+            if p.requires_grad:
+                anchor_ref[f"{idx}.{name}"] = p.detach().clone()
+    if anchor_ref:
+        log(f"  anchoring {len(anchor_ref)} tensors "
+            f"(weight {anchor_weight})")
 
     rng = random.Random(seed)
     order = list(range(len(examples)))
@@ -139,6 +153,19 @@ def train_stage(
                                       attention_mask=mask)
                 hidden = model.norm(hidden)
                 loss = t15.sparse_ce_loss(model, hidden, labels)
+
+                if anchor_ref:
+                    anchor = None
+                    for idx in range(stage_start,
+                                    min(stage_end, stats_base_layers)):
+                        for name, p in model.layers[idx].named_parameters():
+                            ref = anchor_ref.get(f"{idx}.{name}")
+                            if ref is None:
+                                continue
+                            d = (p - ref).pow(2).sum()
+                            anchor = d if anchor is None else anchor + d
+                    if anchor is not None:
+                        loss = loss + anchor_weight * anchor
 
                 opt.zero_grad(set_to_none=True)
                 loss.backward()
@@ -201,6 +228,10 @@ def main() -> int:
                     help="0 = use every record each stage (recommended)")
     ap.add_argument("--cache-chunk", type=int, default=400,
                     help="examples cached at once; controls peak memory")
+    ap.add_argument("--train-from-layer", type=int, default=28,
+                    help="first layer to train; below this the trunk is frozen")
+    ap.add_argument("--anchor-weight", type=float, default=0.01,
+                    help="L2 pull of inherited layers to their base values")
     ap.add_argument("--lr", type=float, default=8e-4)
     ap.add_argument("--min-lr", type=float, default=5e-5)
     ap.add_argument("--grad-clip", type=float, default=1.0)
@@ -243,8 +274,11 @@ def main() -> int:
     examples = t15.build_examples(tokenizer, args.max_seq_len)
     log(f"   {len(examples)} training examples from {Path(args.sft).name}")
 
-    bounds = list(range(stats["base_layers"], args.total_layers,
-                        args.layers_per_stage))
+    first = min(args.train_from_layer, stats["base_layers"])
+    bounds = [first] + [b for b in range(stats["base_layers"],
+                                        args.total_layers,
+                                        args.layers_per_stage)
+                        if b > first]
     if bounds[-1] < args.total_layers:
         bounds.append(args.total_layers)
 
@@ -273,7 +307,9 @@ def main() -> int:
                            epochs=args.epochs_per_stage, lr=args.lr,
                            min_lr=args.min_lr, grad_clip=args.grad_clip,
                            seed=args.seed + s, tag=f"S{s+1}",
-                           cache_chunk=args.cache_chunk)
+                           cache_chunk=args.cache_chunk,
+                           anchor_weight=args.anchor_weight,
+                           stats_base_layers=stats["base_layers"])
         done = sorted(set(done) | {s})
         save_checkpoint(model, ckpt_path,
                         {"done_stages": done, "stage_loss": loss,

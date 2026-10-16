@@ -1,0 +1,1145 @@
+{
+  "model": "hexon-1.8",
+  "use_rag": true,
+  "sets": {
+    "heldout_v1": {
+      "items": 50,
+      "correct": 23,
+      "accuracy": 0.46,
+      "group_coverage": 0.5267,
+      "hallucinations": 5,
+      "hallucination_rate": 0.1,
+      "unsupported_number_items": 7,
+      "empty_responses": 0,
+      "grounded_items": 25,
+      "accuracy_grounded": 0.56,
+      "accuracy_ungrounded": 0.36,
+      "mean_tokens": 88.5,
+      "mean_latency_ms": 8587.8,
+      "records": [
+        {
+          "id": "h-001",
+          "category": "science",
+          "question": "What is the chemical symbol for iron?",
+          "reference": "Fe",
+          "response": "The chemical symbol for iron is Fe.",
+          "tokens_generated": 8,
+          "latency_ms": 2103.9,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-002",
+          "category": "science",
+          "question": "What is the hardest natural substance?",
+          "reference": "Diamond",
+          "response": "The hardest natural substance? The strangest substance you can imagine? A dead tree? A tree? A giant tree? A giant tree? A tree? A giant giant tree? A giant tree? Giant tree? A giant tree? A Giant giant tree? A giant tree? Gi man tree? Gi man tree? Gi giant tree? Gi giant tree? Gi man tree? A giant tree? Gi giant tree? A giant tree?A giant tree? A giant tree?Gi giant tree? A giant tree? An enormous tree? A giant",
+          "tokens_generated": 110,
+          "latency_ms": 9197.9,
+          "retrieved": 1,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-003",
+          "category": "science",
+          "question": "How many bones are in the adult human body?",
+          "reference": "206",
+          "response": "\ud83d\udcc4 A adult human body has approximately 260 bones, of which the spinal cord contains around 37 species (Cro Magnus C02). The spinal cord contains the spinal nerves with the spinal cord itself containing the spinal nerves with the spinal nerves with the spinal nerves.",
+          "tokens_generated": 60,
+          "latency_ms": 6573.6,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "260",
+            "37"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-004",
+          "category": "science",
+          "question": "What is the largest organ in the human body?",
+          "reference": "The skin",
+          "response": "Rebitting and trauma are both complex mental experiences that can be explored in the context of storytelling, but it is rather a result of psychological trauma rather than physical material material material material material material material material substance substance substance substance substance substance substance substance. The Glasshouse Another Larger Organ In the Human Body These Psychological Experiences Psychological Experiences Psychological experiences Psychological experiences Psychological experiences Psychological experiences Psychological experience Psychological experience Psychological experience Psychological experience Psychological experiences Psychological experience Psychological experience Psychological experiences Psychological experiences Psychological experiences Psychological experiencing Psychological experience Psychological experience Psychological experience Psychological experiencing Psychological experience Psychological experience Psychological experiencing Psychological",
+          "tokens_generated": 110,
+          "latency_ms": 9247.4,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-005",
+          "category": "science",
+          "question": "What is the chemical formula for table salt?",
+          "reference": "NaCl (sodium chloride)",
+          "response": "- Chemistry is a branch of science with a focus on describing matter with the help of science, and with focus on describing matter with the help from science. The chemical formula for table salt is NaCl which is sodium and chlorine atoms bonded together by ionic bonding between sodium and chlorine to make sodium and chlorine to make a NaCl molecule.",
+          "tokens_generated": 67,
+          "latency_ms": 6614.9,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-006",
+          "category": "science",
+          "question": "Which blood cells carry oxygen around the body?",
+          "reference": "Red blood cells (erythrocytes), via haemoglobin",
+          "response": "Red blood cells, also called erythrocytes, contain haemoglobin, an iron containing protein that binds oxygen in the lungs and releases it wherever oxygen is scarce. White blood cells defend the body against infection.",
+          "tokens_generated": 40,
+          "latency_ms": 3860.1,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": true,
+          "hallucination_matches": [
+            "white blood cell"
+          ],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-007",
+          "category": "science",
+          "question": "Which organelle is known as the powerhouse of the cell?",
+          "reference": "Mitochondrion (mitochondria)",
+          "response": "Amino Acids and Proteins are the powerhouse of the cell, including mitochondria, which contain their genetic material and control the cell's metabolism. The nucleus is the control center of the cell, containing the genetic material of the cell's cytoplasm and containing organelles such as mitochondria, which contain their genetic material, which are found in the nucleus of the cell and contain their genetic material, which are contained in the nucleus of the cell's cytoplasm, which contain their genetic material, containing their genetic material contained in the nucleus of the cell which contain their genetic material contained",
+          "tokens_generated": 110,
+          "latency_ms": 9909.9,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-008",
+          "category": "science",
+          "question": "At sea level, at what temperature in Celsius does water boil?",
+          "reference": "100 degrees Celsius",
+          "response": "Hot Decomplus (70\u00b0C): 0.00027 Celsius (20\u00b0C vs 25\u00b0C)\nFrozen is neutral form (Na, Na vs Na vs NaCl): 25\u00b0C vs 25\u00b0F (C vs C vs H vs H vs H vs H vs OH vs OH vs OH vs OH vs HOH vs OHOH vs OHOH vs OHOH)",
+          "tokens_generated": 92,
+          "latency_ms": 8194.0,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "0.00027",
+            "20",
+            "25",
+            "70"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-009",
+          "category": "science",
+          "question": "Which gas is most abundant in the Earth's atmosphere?",
+          "reference": "Nitrogen (~78%)",
+          "response": "Blue light (340nm) is the most abundant light frequency in the atmosphere and the gas responsible for the Earth's atmosphere is nitrogen and oxygen. Blue light (340nm) travels from the Sun to Earth's atmosphere without a wavelength dependent absorption and back to the Sun. Blue light is responsible for the majority of the Earth's atmosphere and the gas responsible for the absorption of blue light primarily by the Earth's atmosphere is nitrogen and the gas responsible for the absorption and return of light back to the Sun is oxygen.",
+          "tokens_generated": 110,
+          "latency_ms": 9644.7,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-010",
+          "category": "science",
+          "question": "How many chambers does the human heart have?",
+          "reference": "Four",
+          "response": "The human heart has four chambers, consisting of two atria on top and two ventricles below. The right side pumps blood to the lungs and the left side pumps it around the body.",
+          "tokens_generated": 37,
+          "latency_ms": 4154.0,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-011",
+          "category": "geography",
+          "question": "What is the capital of Australia?",
+          "reference": "Canberra",
+          "response": "- The answer is A Canberra (AU) The capital of Australia is Canberra (AU), which is the largest city in the Australian capital territory. It is the largest city in the Australian territory. It is the largest city of the Australian territory that is the largest city of the Australian territories. It is the largest city of Australia's territory that is the largest city of Australia that is the largest city of Australia.",
+          "tokens_generated": 110,
+          "latency_ms": 9820.9,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-012",
+          "category": "geography",
+          "question": "What is the capital of Canada?",
+          "reference": "Ottawa",
+          "response": "Catalano - Copenhague - Paris - Paris - Paris - Paris - Copenhala - Paris - Paris - Paris - Quebec - Quebec - Quebec - Quebec - Canada - Quebec - Quebec - Quebec - Copenhala - Paris - Copenhala - Copenhala - Paris - Quebec - Quebec - Copenhilla - Paris - Quebec - Quebec - Canada - Copenhilla - Paris - Copenhilla - Paris - Paris - Quebec - Copenhilla - Quebec - Quebec - Quebec - Qu\u00e9bec - Quebec - Quebec - Quebec - Qu\u00e9be",
+          "tokens_generated": 110,
+          "latency_ms": 10046.6,
+          "retrieved": 2,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-013",
+          "category": "geography",
+          "question": "Which is the largest ocean on Earth?",
+          "reference": "The Pacific Ocean",
+          "response": "The Pacific Ocean. Its length is close to that of the Atlantic Ocean's, and the Pacific Ocean contains all of the Earth's oceans except the Atlantic Ocean's closest cousin, the Arctic Ocean's closest cousin, the Southern Ocean's closest cousin, and the others all contain all of Earth's oceans.",
+          "tokens_generated": 60,
+          "latency_ms": 5390.8,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": true,
+          "hallucination_matches": [
+            "atlantic"
+          ],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-014",
+          "category": "history",
+          "question": "In which year did the Berlin Wall fall?",
+          "reference": "1989",
+          "response": "The Berlin Wall fell on 4 October 1999, and 1991 were both years when Sputnik 1 was launched and when Sputnik 1 was a Soviet space machine that was a phone receiver that Soviet Union used to phone to Earth while Sputnik 1 was a phone receiver that Soviet Union sent to Earth while Sputnik 2 was a phone receiver that Soviet Union launched Sputnik 1 from Sputnik space above Earth while Sputnik 2was a phone receiver that Soviet",
+          "tokens_generated": 110,
+          "latency_ms": 9621.1,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": true,
+          "hallucination_matches": [
+            "1991"
+          ],
+          "unsupported_numbers": [
+            "1",
+            "1991",
+            "1999",
+            "2",
+            "4"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-015",
+          "category": "history",
+          "question": "Who was the first person to walk on the Moon?",
+          "reference": "Neil Armstrong",
+          "response": "Who is the first person to walk on the Moon? The real-life record is a feature-brief from the 2022 2022 2-2-2-3-3-3-3-7-7-7-7-3-3-3-4-3-3-3-2-3-3-2-2-2-2-3-.2-3-3-3-.",
+          "tokens_generated": 110,
+          "latency_ms": 10593.3,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-016",
+          "category": "geography",
+          "question": "What is the smallest country in the world by area?",
+          "reference": "Vatican City",
+          "response": "The smallest country in the world is Vatican City, which occupies less than half a square kilometre and covers a few hundred people.",
+          "tokens_generated": 26,
+          "latency_ms": 3001.1,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-017",
+          "category": "geography",
+          "question": "Mount Everest lies in which mountain range?",
+          "reference": "The Himalayas",
+          "response": "The Mountain Mount Everest, the highest peak on Earth, lies in the Range of the Himalayas. Himalayas is the range of the mountains that make up the range above Mount Everest.",
+          "tokens_generated": 35,
+          "latency_ms": 3603.3,
+          "retrieved": 2,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-018",
+          "category": "geography",
+          "question": "Which is the largest hot desert in the world?",
+          "reference": "The Sahara",
+          "response": "The Sahara in North Africa. It covers approximately 30% of the planet's area and the Sahara in North Africa is the largest hot desert. It forms on the far side of the Earth where rain bearing winds rarely reach, or in the rain shadow of a mountain range.",
+          "tokens_generated": 56,
+          "latency_ms": 5178.3,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-019",
+          "category": "science",
+          "question": "Which planet is closest to the Sun?",
+          "reference": "Mercury",
+          "response": "Planetary life in the Solar System is mostly found on Neptune. With an average surface temperature of 867\u00b0F (464\u00b0C), it is much hotter than Mercury, the planet closest to the Sun. With a thick atmosphere mainly composed of carbon dioxide, it is called Venus.",
+          "tokens_generated": 61,
+          "latency_ms": 7676.5,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": true,
+          "hallucination_matches": [
+            "venus"
+          ],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-020",
+          "category": "geography",
+          "question": "Which river is the longest in South America?",
+          "reference": "The Amazon",
+          "response": "The Amazon in South America is the longest river in the world by volume and a body of standing water surrounded by land. Its length is close to that of the Nile in Africa, and which of the two is the longest river in the world is genuinely disputed among geographers, so it is safer to say the Amazon is the largest by volume while the Nile is traditionally cited as the longest.",
+          "tokens_generated": 78,
+          "latency_ms": 6597.8,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": true,
+          "hallucination_matches": [
+            "nile"
+          ],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-021",
+          "category": "tech",
+          "question": "What does RAM stand for?",
+          "reference": "Random Access Memory",
+          "response": "RAM stands for Random Access Memory. It's the computer's working memory, which is used for transferring data between processors. It's volatile, meaning that its memory is erased when power is removed from it, which can be useful for protecting your- hashlib- and other- technologies from being tampered with by other techniques, but its volatile memory is volatile, which can be used to protect your- your- data-from- mishaps- instead- Instead- It's the computer's working memory that is occupied by its own processor's internal RAM-",
+          "tokens_generated": 110,
+          "latency_ms": 9569.1,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-022",
+          "category": "tech",
+          "question": "What does HTTP stand for?",
+          "reference": "HyperText Transfer Protocol",
+          "response": "HTTP stands for HyperText Transfer Protocol and it is the protocol for web transfer between a server and a client, which is a system of interlinked documents identified by addresses and fetched over a protocol that runs entirely on a local network.",
+          "tokens_generated": 110,
+          "latency_ms": 9493.2,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-023",
+          "category": "tech",
+          "question": "What does CPU stand for?",
+          "reference": "Central Processing Unit",
+          "response": "CPU stands for \"Control System (SYCL) - Computer Language (CL)\" and it is a variety of \"System Language (SCL)\". It is most commonly known as \"SYCL and its most popular language\". You can also use \"SYCL\". You can also use \"SYCNCL\". You can also use \"CLSTMCNCL\".",
+          "tokens_generated": 110,
+          "latency_ms": 9568.7,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-024",
+          "category": "tech",
+          "question": "Who is credited with inventing the World Wide Web?",
+          "reference": "Tim Berners-Lee",
+          "response": "- I hereby acknowledge and credit the developer of the World Wide Web \u2013 a development and research laboratory founded by the man that invented something they already supported through his childhood \u2014 who on his own workled by his childhood scientist father- engineer Michael eventhough he himself invented something they already supported through his grandfather\u2019s workled by his grandfather\u2019s workled by their grandfather\u2019s grandfather\u2019s grandfather\u2019s grandfather who built his childhood home\u2019s windmill\u2019s windmill\u2019s wind mill\u2019s wind mill\u2019s windmill\u2019s",
+          "tokens_generated": 110,
+          "latency_ms": 9972.8,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-025",
+          "category": "tech",
+          "question": "In what year was the first iPhone released?",
+          "reference": "2007",
+          "response": "2017 \ud83d\udcd6 Back to 2017 \ud83d\udcd6 The first iPhone was 2017. \ud83d\udcd6 Back to 21st Century \ud83d\udcd6 Back to 22nd Century \ud83d\udcd6 Back to 3rd Millennium \ud83d\udcd6 Back to 25th Millennium \ud83d\udcd6 Back to 360 \ud83d\udcd6 Back to 370 \ud83d\udcd6 Back to 400 \ud83d\udcd6 Back to 270 \ud83d\udcd6 Back to Age of",
+          "tokens_generated": 110,
+          "latency_ms": 11751.0,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "2017",
+            "270",
+            "360",
+            "370",
+            "400"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-026",
+          "category": "tech",
+          "question": "What does HTML stand for?",
+          "reference": "HyperText Markup Language",
+          "response": "HTML stands for HyperText Markup Language, a high level markup language developed by the Document Type Hyers (Draft Docs) and the Document Language Integrated Three (DL3) that are most commonly used by the Document Statesmen (DSM) are a high-level specification that enables the creation of easily convertible, scalable, and extensible, dynamic, and extensible, web-based applications that operate in the Web Workspace (WW, W3C's workstation, which runs in the Document State Machine (DSM",
+          "tokens_generated": 110,
+          "latency_ms": 10342.2,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-027",
+          "category": "tech",
+          "question": "Which company develops the Android operating system?",
+          "reference": "Google",
+          "response": "The system running on the system running on the operating system is the system running on the operating system which runs on ChromaDB. Your statement is direct and factual based on the context provided, but it is not clear based on the available information available to me. A single statement doesn't contain an answer to it based on the current knowledge base.",
+          "tokens_generated": 69,
+          "latency_ms": 6397.9,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-028",
+          "category": "tech",
+          "question": "What is the decimal number 10 written in binary?",
+          "reference": "1010",
+          "response": "Current HTML's a right-to-left defaulting the left-to-right direction of the defaulting the left-to-the-right direction of the defaulting left-to-the-right height of the right-to-left height of the left-to-right height of the left-to-the-rights height of the right-to-right height of the right-left height of the left-left height of the left-right height of the left-right height, but the right-to-left height",
+          "tokens_generated": 110,
+          "latency_ms": 9171.4,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-029",
+          "category": "math",
+          "question": "What is 15% of 200?",
+          "reference": "30",
+          "response": "200 is 200% of 200 (200% of 2100). 200 is 20 * 200000000 which is 2000002000000 (200000020 factors of 200000).",
+          "tokens_generated": 110,
+          "latency_ms": 9681.8,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "20",
+            "200000",
+            "200000000",
+            "200000020",
+            "2000002000000",
+            "2100"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-030",
+          "category": "math",
+          "question": "What is 7 multiplied by 8?",
+          "reference": "56",
+          "response": "- 7 multiplied by 8 is 56, 8 \u00d7 8 \u00d7 2 \u00d7 2 \u00d7 2 = 2520 factors (3 \u00d7 3 \u00d7 3 \u00d7 3) are the product of 7 \u00d7 8 \u00d7 2, 7 \u00d7 8 \u00d7 3, 8 \u00d7 2, 2 \u00d7 2 respectively resulting 2520 factors The factors are the product of 7 \u00d78 \u00d7 2, 7\u00b2 \u00d7 2 \u00d7 2,",
+          "tokens_generated": 110,
+          "latency_ms": 9576.4,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "2",
+            "2520",
+            "3"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-031",
+          "category": "math",
+          "question": "How many degrees do the interior angles of a triangle add up to?",
+          "reference": "180",
+          "response": "- The three interior angles of any triangle are always 180 degrees. A triangle can never contain more than one right angle. Triangles are classified as equilateral with three equal sides and three sides of each equilateral triangle are the sides of the equilateral triangle that forms a square of side twice of the square of that equilateral triangle that forms a square that forms a square of that square of that square of that square that forms a square of that of that square of that square of those of those of those of those of that of those",
+          "tokens_generated": 110,
+          "latency_ms": 9417.1,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-032",
+          "category": "math",
+          "question": "What is the next number in the sequence 2, 4, 8, 16?",
+          "reference": "32",
+          "response": "That isn't covered by the reference material available to me. I can't answer it accurately without inventing something.",
+          "tokens_generated": 22,
+          "latency_ms": 3660.4,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-033",
+          "category": "general",
+          "question": "What is the currency of Japan?",
+          "reference": "The yen",
+          "response": "The currency of Japan is yen (yen) and the above figures are a result of the figures below. The above figures are figures below. The above figures below are figures above. The above figures below are figures below. The above figures above are figures above. The above figures above are figures below. The above figuresabove are figures below. The above figuresbelow are figures below. The above figures Below below are figures below.",
+          "tokens_generated": 110,
+          "latency_ms": 9692.4,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-034",
+          "category": "general",
+          "question": "Who wrote the novel The Hobbit?",
+          "reference": "J.R.R. Tolkien",
+          "response": "The web-based chatbot Hexon-Code authored a novel, The Hobbit, whichomegrana wrote a new chapter that started with The Hobbit in the beginning of gameplay. The web chatbot Hexon-Code authored gameplay footage with gameplay footage footage of The Hobbit in action, where the gameplay footage started with The Hobbit in the Beginning and how The Hobbit started with The Hobbit in the Middle- EARIE of gameplay footage footage footage footage footage started with The Hobbit in The Beginning with how The Hobbit started with The",
+          "tokens_generated": 110,
+          "latency_ms": 10104.7,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-035",
+          "category": "general",
+          "question": "In which year did the Titanic sink?",
+          "reference": "1912",
+          "response": "Titanic is a Titanic. The ship sank on  CFR 1st 1912. (date based on the International Code - 1912)  (based on the International Code - 1st 1st 1st 2012)",
+          "tokens_generated": 59,
+          "latency_ms": 4037.3,
+          "retrieved": 0,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "2012"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-036",
+          "category": "science",
+          "question": "Which element has atomic number 1?",
+          "reference": "Hydrogen",
+          "response": "Iron (-Fe) An element on an atomic number of 26 Iron is Iron (-Fe).",
+          "tokens_generated": 20,
+          "latency_ms": 4362.3,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-037",
+          "category": "general",
+          "question": "What is the tallest mountain above sea level?",
+          "reference": "Mount Everest",
+          "response": "1. Mauna Kea is the highest mountain above sea level. It is the highest mountain above the Earth's crust. There are seven continents on Earth, and Mauna Kea is the highest peak above sea level on Earth's own planet. There are seven continents on Earth and Mauna Kea is the top peak above sea level on Earth's planet's own planet.",
+          "tokens_generated": 76,
+          "latency_ms": 9737.0,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-038",
+          "category": "coding",
+          "question": "Write a Python function that checks whether a string is a palindrome.",
+          "reference": "def is_palindrome(s): return s == s[::-1]",
+          "response": "Corresponding Graphviz-compatible tool: Output a tree model as a tree silhouette graph and Trace a tree silhouette graph as a tree silhouette tree silhouette tree silhouette tree silhouette tree Silo silhouette tree silhouette tree silhouette tree Silly silhouette tree Silly silhouette tree Silo silhouette tree Silly silhouette tree Silive silhouette tree Silive silhouette tree Silo silhouette tree Silo silhouette tree Silive silhouette tree Silie silhouette tree Silie silhouette tree Silo silhouette tree Silie silhouette tree Silly silhouette tree Silie silhouette tree Silive silhouette tree Silivist",
+          "tokens_generated": 110,
+          "latency_ms": 12241.5,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-039",
+          "category": "coding",
+          "question": "Write a Python function that computes the factorial of a number.",
+          "reference": "def factorial(n): iterative or recursive product of 1..n",
+          "response": "Supported Python Versions (using **C++/C#/Java) - Python >= 3 (>= 3.3) - C++ (>= 2.0) - C# (>= 2.0) (>= 2.0) (-3, -2.0, -0.2) (>= 2.0)\" { **C++/C#/JS/Java/C#/Java/C#/C#) - (>= 2.",
+          "tokens_generated": 110,
+          "latency_ms": 16230.9,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-040",
+          "category": "coding",
+          "question": "Write a Python function that counts the frequency of each word in a string.",
+          "reference": "def word_frequency(text): returns a dict of word -> count",
+          "response": "Write a function `text_frequency(text)` to count the frequency of each word in the provided text. If you don't specify how many times each word appears instead of the word itself, this function will return the total number of words which appear less than 1000 appearances but more than 1000 appearances. If you don't specify how to avoid the if statement that would be replaced by a list comprehension or a list.",
+          "tokens_generated": 110,
+          "latency_ms": 13271.7,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.6666666666666666,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-041",
+          "category": "coding",
+          "question": "Write a Python function that merges two already-sorted lists into one sorted list.",
+          "reference": "Two-pointer merge of two sorted lists",
+          "response": "- Merge sort works by repeatedly rotating the portion of the list that contains the smaller item until each subtask contains the sum of the smaller item times the half of the smaller item each time, then repeats until each subtask contains the sum times the half of the subtask each time that the current subtask contains the sum times the subtask each time that each subtask contains the sum times that each subtask contains the sumtimes that each subtask contains the sumTimes that each subtask contains the sumTotal times that each subtask contains the",
+          "tokens_generated": 110,
+          "latency_ms": 11460.0,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-042",
+          "category": "coding",
+          "question": "Write a Python function that removes duplicates from a list while preserving the original order.",
+          "reference": "Track a seen set and append unseen items in order",
+          "response": "```python\nimport random\n\ndef remove_duplicates(input: list) -> None:\n    if len(input) != 1:\n        return input\n```\n\nRun in production with `nosUnit` to avoid issues on production environments like a typical Python web app. Add optional stopping a condition to throw an error if the input is 100000000 the first time you call the function without specifying what to throw the error about the function being available as a language-based runner.",
+          "tokens_generated": 110,
+          "latency_ms": 9918.0,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            true,
+            true,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.6666666666666666,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-043",
+          "category": "coding",
+          "question": "Write a Python function that returns the greatest common divisor of two numbers.",
+          "reference": "Euclid's algorithm, GCD",
+          "response": "Here's a Python function that returns the greatest common divisor of two numbers: `answer = return_answer(2, 3)` will return `2 and 3`. However you can also directly call `answer` in the same function: `answer = return_answer(\"2\", 3) will return 2 and 3 respectively (both are the greatest common divisors of 2 and 3). Add a docstring to your function (but avoid using `__doc`).",
+          "tokens_generated": 110,
+          "latency_ms": 12551.2,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.6666666666666666,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-044",
+          "category": "coding",
+          "question": "Write a Python function that flattens a nested list of lists into a single list.",
+          "reference": "Recursive or iterative flatten",
+          "response": "Check multiple ways to repeatedly apply the palindrome check without replicating the comparison of the string with its reverse, obtained by slicing with a step of minus one; count how many each word occurs in the text, and remove the first occurrence by the standard shortest version of the comparison of the string with its reversed contents, obtained by the standard shortest version of the string comparison of the string with its reversed content, obtained by the standard shortest versionof the string comparison of the string with itself, obtained by the standard shortest versionfunction of the string comparison of the",
+          "tokens_generated": 110,
+          "latency_ms": 8963.2,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-045",
+          "category": "coding",
+          "question": "Write a Python class that implements a stack with push and pop methods.",
+          "reference": "class Stack: push/pop on a list",
+          "response": "class Stack:\n    def push(self, item):\n        self.items.append(item)\n    def pop(self):\n        self.items.pop()\n    def __len__(self):\n        return len(self.items.items.items.items.values())\nclass Stack:\n    def push(\n        self, \"stack\"\n    ) -> None:\n        def push(self, item, *inits, **ins) -> None:\n            self.items.append(item, *inits, **ins).",
+          "tokens_generated": 110,
+          "latency_ms": 9053.2,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-046",
+          "category": "coding",
+          "question": "Write a Python function that prints FizzBuzz logic for a given number.",
+          "reference": "Multiples of 3 -> Fizz, 5 -> Buzz, both -> FizzBuzz",
+          "response": "Write a Python function that takes a non-negative integer as an input parameter `n` and returns the same function unchanged, but the result of the function is the same as the original function return.",
+          "tokens_generated": 40,
+          "latency_ms": 4059.4,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false,
+            false,
+            false
+          ],
+          "groups_total": 4,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-047",
+          "category": "coding",
+          "question": "Write a Python function that checks whether two strings are anagrams of each other.",
+          "reference": "Compare sorted characters or a character count map",
+          "response": "```python\nfrom collections import Counter\n\ndef are_anagrams(string1: str, string2: str) -> bool:\n    return \"1\" in str(Counter(string1.split()))\n```\n\nCheck whether the strings are the same length, and compare the strings with the standard case to find anagrams of each other.",
+          "tokens_generated": 110,
+          "latency_ms": 9621.7,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "groups_total": 4,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-048",
+          "category": "coding",
+          "question": "Write a JavaScript function that reverses a string.",
+          "reference": "function reverseString(s) { return s.split('').reverse().join(''); }",
+          "response": "const reverseString = (s) => s.reverse().join('');\nconsole.log(reverseString);  // Output: \"123\"\n\nThe above function is a bit buggy because the reverse of the string is an unsupported JavaScript expression. A better version would be a basic reverse-of-sbyte method which is a Promise.all of the above-mentioned features are what.",
+          "tokens_generated": 110,
+          "latency_ms": 12570.0,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": false,
+          "groups_matched": [
+            true,
+            true,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.6666666666666666,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-049",
+          "category": "coding",
+          "question": "Write a Python function that counts how many vowels are in a string.",
+          "reference": "Count characters in a vowel set",
+          "response": "```python\nfrom collections import Counter\n\ndef lengthof_sequence(text: str) -> int:\n    return sum(1 for ch in text.split() if ch.isalnum())\n```\n\nCheckpointing the code doesn't show how many the program is calculating the length of the subsequences that contain all the vowels from the string \"ccccccccccccccccCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\".",
+          "tokens_generated": 110,
+          "latency_ms": 9383.3,
+          "retrieved": 3,
+          "context_covers_answer": true,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-050",
+          "category": "coding",
+          "question": "Write a Python function that finds the largest number in a list.",
+          "reference": "def largest(nums): max over the list",
+          "response": "Challenge of the week: Write a function that returns the largest number in a list of non-empty strings. Add a default argument to avoid infinite loops, which are when the browser is running your app and it's unable to attempt to work with the browser's non-terminal. Add a default parameter to avoid infinite loops when your app is unable to attempt to work with non-terminal's non-terminal's non-terminal.",
+          "tokens_generated": 110,
+          "latency_ms": 12501.9,
+          "retrieved": 3,
+          "context_covers_answer": false,
+          "correct": false,
+          "groups_matched": [
+            false,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.6666666666666666,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        }
+      ]
+    }
+  },
+  "wall_clock_s": 430.7
+}

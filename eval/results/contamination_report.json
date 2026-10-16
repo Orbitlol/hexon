@@ -3,7 +3,11 @@
   "corpora_checked": [
     "data/curated/alpaca_knowledge.jsonl",
     "data/curated/common_crawl_curated.jsonl",
-    "exports/hexon-nano-sft-dataset.jsonl"
+    "exports/hexon-nano-sft-dataset.jsonl",
+    "data/sft/hexon_15_sft.jsonl",
+    "data/knowledge/hexon_core_science.jsonl",
+    "data/knowledge/hexon_core_tech.jsonl",
+    "data/knowledge/hexon_mined_docs.jsonl"
   ],
   "jaccard_threshold": 0.6,
   "contaminated_items": [
