@@ -42,6 +42,9 @@ NEW_CORPORA = [
     ROOT / "data" / "knowledge" / "hexon_core_science.jsonl",
     ROOT / "data" / "knowledge" / "hexon_core_tech.jsonl",
     ROOT / "data" / "knowledge" / "hexon_mined_docs.jsonl",
+    ROOT / "data" / "knowledge" / "hexon_mined_bulk.jsonl",
+    ROOT / "data" / "knowledge" / "hexon_mined_general.jsonl",
+    ROOT / "data" / "knowledge" / "hexon_general.jsonl",
 ]
 
 # Curated sources worth carrying over from the pre-existing index. Everything
@@ -61,9 +64,12 @@ KEEP_SOURCES_PREFIXES = (
 )
 
 
-def load_new_docs() -> List[Dict[str, Any]]:
+def load_new_docs(exclude=()) -> List[Dict[str, Any]]:
     docs: List[Dict[str, Any]] = []
     for path in NEW_CORPORA:
+        if any(e and e in path.name for e in exclude):
+            print(f"  - excluding {path.name}")
+            continue
         if not path.exists():
             print(f"  ! missing {path}", file=sys.stderr)
             continue
@@ -78,6 +84,10 @@ def load_new_docs() -> List[Dict[str, Any]]:
 
 
 def main() -> int:
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--exclude", nargs="*", default=[])
+    args = ap.parse_args()
     # Snapshot the curated chunks out of the existing index before rebuilding.
     # The index has to be rebuilt from scratch whenever DEFAULT_EMBEDDING_DIM
     # changes, because every stored vector is that wide.
@@ -128,7 +138,7 @@ def main() -> int:
         )
         print(f"  re-added : {len(keep_docs)} curated chunks")
 
-    new_docs = load_new_docs()
+    new_docs = load_new_docs(exclude=args.exclude)
     texts = [d["text"] for d in new_docs]
     metas = [
         {
