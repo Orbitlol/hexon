@@ -1366,7 +1366,7 @@ class HexonChromaRAG:
         # Widen the candidate pool. The vector stage only has to get the right
         # chunk into the shortlist; re-ranking picks it out. At 18 candidates
         # most of the index was never scored at all.
-        n_candidates = min(total, max(top_k * 20, 60))
+        n_candidates = min(total, max(top_k * 100, 500))
         query_kwargs: Dict[str, Any] = {
             "query_texts": [query],
             "n_results": n_candidates,
@@ -1409,13 +1409,25 @@ class HexonChromaRAG:
             pool.append((cid, doc_text, meta, dist, doc_stems_list,
                          set(doc_stems_list)))
 
-        doc_freq: Dict[str, int] = {}
-        for _, _, _, _, _, doc_stems in pool:
-            for t in doc_stems:
-                doc_freq[t] = doc_freq.get(t, 0) + 1
         n_pool = max(1, len(pool))
-        idf = {t: math.log(1.0 + n_pool / (1.0 + df))
-               for t, df in doc_freq.items()}
+        # Prefer document frequencies for the whole collection (written by
+        # build_knowledge_base.py) over frequencies from the candidate pool.
+        # Pool frequencies are badly biased: a term shared by every candidate
+        # looks worthless even when it is rare in the corpus, which is exactly
+        # backwards for a specific question like "who wrote The Hobbit".
+        global_df = self._term_df()
+        if global_df:
+            n_docs = max(1, self.count())
+            doc_freq = global_df
+            idf = {t: math.log(1.0 + n_docs / (1.0 + df))
+                   for t, df in global_df.items()}
+        else:
+            doc_freq = {}
+            for _, _, _, _, _, doc_stems in pool:
+                for t in doc_stems:
+                    doc_freq[t] = doc_freq.get(t, 0) + 1
+            idf = {t: math.log(1.0 + n_pool / (1.0 + df))
+                   for t, df in doc_freq.items()}
         idf_total = sum(idf.get(t, math.log(1.0 + n_pool))
                         for t in query_stems) or 1.0
 
@@ -1488,6 +1500,49 @@ class HexonChromaRAG:
 
         candidates.sort(key=lambda c: c.score, reverse=True)
         return candidates[:top_k]
+
+    _TERM_DF_FILE = "term_df.json"
+
+    def _term_df(self) -> Dict[str, int]:
+        """Load the collection-wide document-frequency table, if present."""
+        cached = getattr(self, "_term_df_cache", None)
+        if cached is not None:
+            return cached
+        table: Dict[str, int] = {}
+        try:
+            if self.persist_dir is not None:
+                path = self.persist_dir / self._TERM_DF_FILE
+                if path.exists():
+                    raw = json.loads(path.read_text())
+                    table = {str(k): int(v) for k, v in raw.items()}
+        except Exception:
+            table = {}
+        self._term_df_cache = table
+        return table
+
+    def build_term_df(self) -> int:
+        """Recompute and persist document frequencies for the collection.
+
+        Called by build_knowledge_base.py after ingestion. The table is the
+        global-IDF source for retrieval; without it IDF falls back to the
+        candidate pool, which under-ranks rare query terms.
+        """
+        import collections as _c
+        counts: Dict[str, int] = {}
+        got = self.collection.get()
+        docs = got.get("documents") or []
+        for doc in docs:
+            for t in set(extract_content_tokens(str(doc))):
+                counts[t] = counts.get(t, 0) + 1
+        # Drop terms too rare to generalise and too common to discriminate.
+        n = max(1, len(docs))
+        counts = {t: c for t, c in counts.items() if 2 <= c <= int(n * 0.4)}
+        if self.persist_dir is not None:
+            self.persist_dir.mkdir(parents=True, exist_ok=True)
+            (self.persist_dir / self._TERM_DF_FILE).write_text(
+                json.dumps(counts, separators=(",", ":")))
+        self._term_df_cache = counts
+        return len(counts)
 
     @staticmethod
     def extract_focused_context(chunk_text_str: str, query: str, max_words: int = 160) -> str:

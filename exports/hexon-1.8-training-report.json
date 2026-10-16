@@ -4,7 +4,7 @@
   "total_layers": 32,
   "sft": "/home/user/hexon/data/sft/hexon_18_sft.jsonl",
   "layers_per_stage": 2,
-  "epochs_per_stage": 3,
+  "epochs_per_stage": 4,
   "quant": "q4_deep",
   "export": {
     "output_path": "/home/user/hexon/exports/hexon-1.8.gguf",

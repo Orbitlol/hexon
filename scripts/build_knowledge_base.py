@@ -177,6 +177,15 @@ def main() -> int:
     if out_of_range:
         print(f"\nFAIL: {len(out_of_range)} chunks outside 200-300 words: {out_of_range[:10]}")
         return 1
+    # Persist collection-wide document frequencies so retrieval can use global
+    # IDF instead of inferring it from each query's candidate pool.
+    try:
+        from hexon.rag import HexonChromaRAG
+        n_terms = HexonChromaRAG(persist_dir=str(persist_dir)).build_term_df()
+        print(f"\nterm frequency table: {n_terms} terms")
+    except Exception as exc:
+        print(f"\nterm frequency table: skipped ({exc})")
+
     print("\nOK: every chunk is 200-300 words")
     return 0
 
