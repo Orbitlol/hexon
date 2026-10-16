@@ -22,7 +22,7 @@ model's logits match 1.2's exactly before training. Those parameters are
 mathematically no-ops until trained - this script is what gives them content.
 
     python3 scripts/train_18.py --total-layers 91 --layers-per-stage 6 \
-        --epochs-per-stage 2 --examples-per-stage 700 --max-seq-len 288
+        --epochs-per-stage 2 --examples-per-stage 700 --max-seq-len 384
 """
 
 from __future__ import annotations
@@ -79,6 +79,7 @@ def train_stage(
     grad_clip: float,
     seed: int,
     tag: str,
+    cache_chunk: int = 400,
 ) -> float:
     """Train layers [stage_start, stage_end) with the lower trunk frozen."""
     trainable: List[torch.nn.Parameter] = []
@@ -92,62 +93,72 @@ def train_stage(
     opt = torch.optim.AdamW(trainable, lr=lr, weight_decay=0.02,
                             betas=(0.9, 0.95))
 
-    log(f"  caching trunk below layer {stage_start} "
-        f"({len(examples)} examples)...")
-    t0 = time.time()
-    cached = t15.precompute_trunk(model, examples, stage_start)
-    log(f"  cached in {time.time()-t0:.0f}s")
+    rng = random.Random(seed)
+    order = list(range(len(examples)))
+    rng.shuffle(order)
+    chunks = [order[i:i + cache_chunk]
+              for i in range(0, len(order), cache_chunk)]
 
-    lengths = [len(x[0]) for x in examples]
-    all_batches = [
-        t15.make_index_batches(len(examples), lengths, 1, seed + ep)
-        for ep in range(epochs)
-    ]
-    total_steps = sum(len(b) for b in all_batches)
+    total_steps = epochs * len(examples)
     step = 0
-    running = 0.0
+    loss_sum = 0.0
+    loss_n = 0
 
-    log(f"  training layers {stage_start}..{stage_end - 1} "
-        f"({total_steps} steps)")
-    for epoch, batches in enumerate(all_batches):
-        model.train()
-        epoch_loss, n = 0.0, 0
-        for batch_idx in batches:
-            i = batch_idx[0]
-            cache = cached[i]
-            hidden = cache["hidden"].float()
-            cos, sin, mask = cache["cos"], cache["sin"], cache["mask"]
-            labels = torch.tensor([examples[i][1]], dtype=torch.long)
+    log(f"  training layers {stage_start}..{stage_end - 1} on all "
+        f"{len(examples)} examples ({total_steps} steps, "
+        f"{len(chunks)} cached chunks of <={cache_chunk})")
+    for ci, idxs in enumerate(chunks):
+        sub = [examples[i] for i in idxs]
+        t0 = time.time()
+        cached = t15.precompute_trunk(model, sub, stage_start)
+        lengths = [len(x[0]) for x in sub]
+        all_batches = [
+            t15.make_index_batches(len(sub), lengths, 1, seed + ep)
+            for ep in range(epochs)
+        ]
+        log(f"  chunk {ci + 1}/{len(chunks)} ({len(sub)} ex, "
+            f"cached in {time.time() - t0:.0f}s)")
+        for epoch, batches in enumerate(all_batches):
+            model.train()
+            epoch_loss, n = 0.0, 0
+            for batch_idx in batches:
+                i = batch_idx[0]
+                cache = cached[i]
+                hidden = cache["hidden"].float()
+                cos, sin, mask = cache["cos"], cache["sin"], cache["mask"]
+                labels = torch.tensor([sub[i][1]], dtype=torch.long)
 
-            progress = step / max(1, total_steps - 1)
-            cur_lr = min_lr + 0.5 * (lr - min_lr) * (
-                1 + math.cos(math.pi * progress))
-            for pg in opt.param_groups:
-                pg["lr"] = cur_lr
+                progress = step / max(1, total_steps - 1)
+                cur_lr = min_lr + 0.5 * (lr - min_lr) * (
+                    1 + math.cos(math.pi * progress))
+                for pg in opt.param_groups:
+                    pg["lr"] = cur_lr
 
-            for layer in model.layers[stage_start:]:
-                hidden, _ = layer(hidden, cos=cos, sin=sin,
-                                  attention_mask=mask)
-            hidden = model.norm(hidden)
-            loss = t15.sparse_ce_loss(model, hidden, labels)
+                for layer in model.layers[stage_start:]:
+                    hidden, _ = layer(hidden, cos=cos, sin=sin,
+                                      attention_mask=mask)
+                hidden = model.norm(hidden)
+                loss = t15.sparse_ce_loss(model, hidden, labels)
 
-            opt.zero_grad(set_to_none=True)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(trainable, grad_clip)
-            opt.step()
+                opt.zero_grad(set_to_none=True)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(trainable, grad_clip)
+                opt.step()
 
-            epoch_loss += float(loss.detach())
-            n += 1
-            step += 1
-            if step % 100 == 0 or step == 1:
-                log(f"    {tag} step {step}/{total_steps} "
-                    f"loss={float(loss.detach()):.4f} lr={cur_lr:.2e}")
-        running = epoch_loss / max(1, n)
-        log(f"    {tag} epoch {epoch+1}/{epochs} mean_loss={running:.4f}")
+                epoch_loss += float(loss.detach())
+                n += 1
+                step += 1
+                loss_sum += float(loss.detach())
+                loss_n += 1
+                if step % 500 == 0 or step == 1:
+                    log(f"    {tag} step {step}/{total_steps} "
+                        f"loss={float(loss.detach()):.4f} lr={cur_lr:.2e}")
+            log(f"    {tag} chunk {ci + 1} epoch {epoch + 1}/{epochs} "
+                f"mean_loss={epoch_loss / max(1, n):.4f}")
+        del cached
 
-    del cached
     del opt
-    return running
+    return loss_sum / max(1, loss_n)
 
 
 def _export(model: HexonForCausalLM, tokenizer: Any, args: Any) -> None:
@@ -186,11 +197,14 @@ def main() -> int:
     ap.add_argument("--total-layers", type=int, default=91)
     ap.add_argument("--layers-per-stage", type=int, default=6)
     ap.add_argument("--epochs-per-stage", type=int, default=2)
-    ap.add_argument("--examples-per-stage", type=int, default=700)
+    ap.add_argument("--examples-per-stage", type=int, default=0,
+                    help="0 = use every record each stage (recommended)")
+    ap.add_argument("--cache-chunk", type=int, default=400,
+                    help="examples cached at once; controls peak memory")
     ap.add_argument("--lr", type=float, default=8e-4)
     ap.add_argument("--min-lr", type=float, default=5e-5)
     ap.add_argument("--grad-clip", type=float, default=1.0)
-    ap.add_argument("--max-seq-len", type=int, default=288)
+    ap.add_argument("--max-seq-len", type=int, default=384)
     ap.add_argument("--seed", type=int, default=18)
     ap.add_argument("--checkpoint",
                     default="/home/user/hexon/.deps/hexon18_ckpt.pt")
@@ -249,15 +263,17 @@ def main() -> int:
                 f"(layers {start}..{end-1}) already done ==")
             continue
         log(f"== stage {s+1}/{len(bounds)-1}: layers {start}..{end-1} ==")
-        rng = random.Random(args.seed + s)
-        subset = (rng.sample(examples, args.examples_per_stage)
-                  if len(examples) > args.examples_per_stage
-                  else list(examples))
+        if args.examples_per_stage and len(examples) > args.examples_per_stage:
+            rng = random.Random(args.seed + s)
+            subset = rng.sample(examples, args.examples_per_stage)
+        else:
+            subset = list(examples)
 
         loss = train_stage(model, subset, start, end,
                            epochs=args.epochs_per_stage, lr=args.lr,
                            min_lr=args.min_lr, grad_clip=args.grad_clip,
-                           seed=args.seed + s, tag=f"S{s+1}")
+                           seed=args.seed + s, tag=f"S{s+1}",
+                           cache_chunk=args.cache_chunk)
         done = sorted(set(done) | {s})
         save_checkpoint(model, ckpt_path,
                         {"done_stages": done, "stage_loss": loss,
