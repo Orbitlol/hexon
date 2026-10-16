@@ -2,29 +2,34 @@
 """Bulk-mine a large knowledge corpus from the reachable sources.
 
 The sandbox can only reach github.com, registry.npmjs.org and pypi.org, so
-this script discovers package names automatically instead of using a
-hand-written list, then pulls and chunks the documentation for each one.
+this discovers package names automatically instead of using a hand-written
+list, then pulls and chunks the documentation for each one.
 
-Sources, in the order they are tried:
+Sources:
 
-1.  **PyPI** long descriptions. Package names come from the
-    `hugovk/top-pypi-packages` list (fetched through the GitHub API, which is
-    reachable); if that fails we fall back to a hardcoded seed list.
+1.  **PyPI** long descriptions. Names come from the hugovk/top-pypi-packages
+    list via the GitHub API; falls back to a seed list if unreachable.
 2.  **npm** READMEs, discovered through the registry search endpoint.
-3.  **GitHub** repository READMEs, discovered through `gh api` search. `gh` is
-    authenticated, so this gets a 5000/hour rate limit instead of the 60/hour
-    anonymous one. Skipped silently if `gh` is unavailable.
+3.  **GitHub** repository READMEs via `gh api` (authenticated, so 5000/hr
+    instead of the 60/hr anonymous limit). Skipped if `gh` is unavailable.
 
-Cleaning, prose-density filtering and chunking are reused from
-`mine_knowledge.py` so that everything in the corpus is chunked identically
-(200-300 words).
+Two behaviours exist specifically because the sandbox re-clones from scratch
+without warning and kills running jobs:
 
-    python3 scripts/mine_bulk.py --max-pypi 1200 --max-npm 600 --max-github 800
+*   `--resume` appends to the output file and skips packages already present,
+    so a reset costs the in-flight request rather than the whole run.
+*   Every chunk is written and flushed the moment it is produced, so partial
+    output survives a kill even without `--resume`.
+
+    python3 scripts/mine_bulk.py --max-pypi 1500 --max-github 800 --resume
+    python3 scripts/mine_bulk.py --skip-pypi --skip-npm --max-github 1200 \
+        --general --out data/knowledge/hexon_mined_general.jsonl --resume
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import re
 import subprocess
@@ -41,7 +46,6 @@ import mine_knowledge as mk  # noqa: E402
 
 OUT = ROOT / "data" / "knowledge" / "hexon_mined_bulk.jsonl"
 
-# Used only if the top-pypi-packages list cannot be fetched.
 PYPI_SEED = [
     "requests", "flask", "fastapi", "django", "numpy", "pandas", "scipy",
     "matplotlib", "pytest", "click", "pydantic", "sqlalchemy", "celery",
@@ -54,15 +58,14 @@ PYPI_SEED = [
     "numba", "cython", "hypothesis", "mypy", "ruff", "flake8", "pylint",
     "isort", "tox", "nox", "poetry", "pipenv", "setuptools", "wheel",
     "twine", "sphinx", "mkdocs", "nbconvert", "jupyter", "ipykernel",
-    "opencv-python", "imutils", "pytesseract", "scrapy", "selenium",
-    "playwright", "paramiko", "fabric", "invoke", "marshmallow", "attrs",
-    "cattrs", "orjson", "ujson", "msgpack", "protobuf", "grpcio",
-    "websockets", "socketio", "starlette", "sanic", "tornado", "pyramid",
-    "bottle", "cherrypy", "gunicorn", "supervisor", "docker", "kubernetes",
-    "ansible", "salt", "terraform", "moto", "responses", "vcrpy",
-    "freezegun", "factory-boy", "faker", "sqlmodel", "peewee", "pony",
-    "tortoise-orm", "asyncpg", "aiosqlite", "pymongo", "motor", "elasticsearch",
-    "opensearch-py", "neo4j", "py2neo", "networkx", "igraph", "python-louvain",
+    "opencv-python", "scrapy", "selenium", "playwright", "paramiko",
+    "fabric", "invoke", "marshmallow", "attrs", "cattrs", "orjson",
+    "ujson", "msgpack", "protobuf", "grpcio", "websockets", "starlette",
+    "sanic", "tornado", "pyramid", "bottle", "gunicorn", "supervisor",
+    "docker", "kubernetes", "ansible", "moto", "responses", "vcrpy",
+    "freezegun", "factory-boy", "faker", "sqlmodel", "peewee",
+    "tortoise-orm", "asyncpg", "aiosqlite", "pymongo", "motor",
+    "elasticsearch", "neo4j", "igraph", "python-louvain",
 ]
 
 NPM_SEED = [
@@ -72,16 +75,15 @@ NPM_SEED = [
     "next", "nuxt", "svelte", "angular", "ember", "backbone", "jquery",
     "three", "d3", "chart.js", "moment", "dayjs", "date-fns", "uuid",
     "zod", "yup", "joi", "ajv", "immer", "rxjs", "apollo", "graphql",
-    "prisma", "sequelize", "typeorm", "knex", "drizzle-orm", "swr",
-    "react-query", "zustand", "jotai", "recoil", "formik", "react-hook-form",
-    "styled-components", "emotion", "framer-motion", "gsap", "animejs",
-    "puppeteer", "playwright", "cypress", "vitest", "rollup", "esbuild",
-    "swc", "parcel", "turbo", "nx", "lerna", "husky", "lint-staged",
-    "commitlint", "semantic-release", "storybook", "electron", "tauri",
-    "capacitor", "cordova", "ionic", "react-native", "expo", "metro",
+    "prisma", "sequelize", "typeorm", "knex", "swr", "zustand", "jotai",
+    "recoil", "formik", "react-hook-form", "styled-components", "emotion",
+    "framer-motion", "gsap", "puppeteer", "playwright", "cypress",
+    "vitest", "rollup", "esbuild", "parcel", "turbo", "nx", "lerna",
+    "husky", "lint-staged", "commitlint", "semantic-release", "storybook",
+    "electron", "tauri", "capacitor", "ionic", "react-native", "expo",
 ]
 
-# Topics used to find GitHub repos with substantial READMEs.
+# Coding-oriented: find repositories with substantial READMEs.
 GITHUB_QUERIES = [
     "stars:>20000",
     "stars:>8000 topic:documentation",
@@ -97,14 +99,35 @@ GITHUB_QUERIES = [
     "stars:>1000 topic:compilers",
 ]
 
+# General-knowledge: the held-out benchmark is 74% non-coding, and package
+# documentation does nothing for those questions, so the corpus needs a second
+# pass aimed at expository and educational repositories.
+GENERAL_QUERIES = [
+    "stars:>1000 topic:education",
+    "stars:>500 topic:textbook",
+    "stars:>500 topic:study-notes",
+    "stars:>500 topic:cheatsheet",
+    "stars:>300 topic:knowledge-base",
+    "stars:>300 topic:encyclopedia",
+    "stars:>300 topic:geography",
+    "stars:>300 topic:history",
+    "stars:>500 topic:science",
+    "stars:>300 topic:biology",
+    "stars:>300 topic:physics",
+    "stars:>300 topic:chemistry",
+    "stars:>500 topic:interview-questions",
+    "stars:>300 topic:algorithms",
+    "stars:>300 topic:data-structures",
+    "stars:>1000 topic:books",
+    "stars:>300 topic:trivia",
+    "stars:>200 topic:world-facts",
+]
+
 
 def _gh_json(args: List[str]) -> Optional[Any]:
-    """Run `gh api ...` and parse JSON. Returns None on any failure."""
     try:
-        proc = subprocess.run(
-            ["gh", "api"] + args,
-            capture_output=True, text=True, timeout=60,
-        )
+        proc = subprocess.run(["gh", "api"] + args, capture_output=True,
+                              text=True, timeout=60)
         if proc.returncode != 0:
             return None
         return json.loads(proc.stdout)
@@ -113,29 +136,26 @@ def _gh_json(args: List[str]) -> Optional[Any]:
 
 
 def discover_pypi(limit: int) -> List[str]:
-    """Top PyPI packages by downloads, via the GitHub-hosted ranking."""
     data = _gh_json([
         "repos/hugovk/top-pypi-packages/contents/"
         "top-pypi-packages-30-days.min.json",
     ])
     names: List[str] = []
     if isinstance(data, dict) and data.get("content"):
-        import base64
         try:
             raw = base64.b64decode(data["content"]).decode("utf-8", "replace")
-            rows = json.loads(raw).get("rows", [])
-            names = [r["project"] for r in rows if r.get("project")]
+            names = [r["project"] for r in json.loads(raw).get("rows", [])
+                     if r.get("project")]
         except Exception as exc:
             print(f"  ! could not decode top-pypi list: {exc}")
     if names:
-        print(f"  discovered {len(names)} PyPI packages (top-pypi-packages)")
+        print(f"  discovered {len(names)} PyPI packages")
         return names[:limit]
     print("  ! falling back to hardcoded PyPI seed list")
     return PYPI_SEED[:limit]
 
 
 def discover_npm(limit: int) -> List[str]:
-    """Popular npm packages via the registry search endpoint."""
     names: List[str] = []
     for query in ["", "keywords:framework", "keywords:library",
                   "keywords:tool", "keywords:cli", "keywords:database",
@@ -159,16 +179,12 @@ def discover_npm(limit: int) -> List[str]:
     return NPM_SEED[:limit]
 
 
-def discover_github(limit: int) -> List[str]:
-    """Top-starred repos, as 'owner/name' strings."""
+def discover_github(limit: int, general: bool = False) -> List[str]:
     repos: List[str] = []
-    for q in GITHUB_QUERIES:
+    for q in (GENERAL_QUERIES if general else GITHUB_QUERIES):
         data = _gh_json([
-            "search/repositories",
-            "-X", "GET",
-            "-f", f"q={q}",
-            "-f", "sort=stars",
-            "-f", "order=desc",
+            "search/repositories", "-X", "GET",
+            "-f", f"q={q}", "-f", "sort=stars", "-f", "order=desc",
             "-f", "per_page=100",
         ])
         if not data or not isinstance(data.get("items"), list):
@@ -187,11 +203,9 @@ def discover_github(limit: int) -> List[str]:
 
 
 def fetch_github_readme(full_name: str) -> Optional[Dict[str, Any]]:
-    """Fetch a repo README through the authenticated GitHub API."""
     data = _gh_json([f"repos/{full_name}/readme"])
     if not isinstance(data, dict) or not data.get("content"):
         return None
-    import base64
     try:
         body = base64.b64decode(data["content"]).decode("utf-8", "replace")
     except Exception:
@@ -212,17 +226,39 @@ def fetch_github_readme(full_name: str) -> Optional[Dict[str, Any]]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--max-pypi", type=int, default=1200)
-    ap.add_argument("--max-npm", type=int, default=600)
+    ap.add_argument("--max-pypi", type=int, default=1500)
+    ap.add_argument("--max-npm", type=int, default=700)
     ap.add_argument("--max-github", type=int, default=800)
     ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--skip-pypi", action="store_true")
+    ap.add_argument("--skip-npm", action="store_true")
+    ap.add_argument("--skip-github", action="store_true")
+    ap.add_argument("--general", action="store_true",
+                    help="Use educational/general-knowledge GitHub queries.")
     args = ap.parse_args()
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    docs: List[Dict[str, Any]] = []
     seen: set = set()
+    if out_path.exists() and args.resume:
+        n = 0
+        with out_path.open("r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    c = json.loads(line)
+                except Exception:
+                    continue
+                seen.add((c.get("source"), c.get("package")))
+                n += 1
+        print(f"resuming: {n} chunks, {len(seen)} packages already done")
+
+    fh = out_path.open("a" if args.resume else "w", encoding="utf-8")
+    docs: List[Dict[str, Any]] = []
 
     def add(d: Optional[Dict[str, Any]]) -> bool:
         if not d or not d.get("text"):
@@ -232,67 +268,70 @@ def main() -> int:
             return False
         seen.add(key)
         docs.append(d)
-        return True
-
-    # --- PyPI -------------------------------------------------------------
-    pypi_names = discover_pypi(args.max_pypi)
-    print(f"fetching up to {len(pypi_names)} packages from PyPI...")
-    n_ok = 0
-    for i, pkg in enumerate(pypi_names, 1):
-        if add(mk.fetch_pypi(pkg)):
-            n_ok += 1
-        if i % 100 == 0:
-            print(f"    {i}/{len(pypi_names)} -> {n_ok} kept")
-        time.sleep(0.05)
-    print(f"  PyPI: {n_ok} docs with usable text")
-
-    # --- npm --------------------------------------------------------------
-    npm_names = discover_npm(args.max_npm)
-    print(f"fetching up to {len(npm_names)} packages from npm...")
-    n_ok = 0
-    for i, pkg in enumerate(npm_names, 1):
-        if add(mk.fetch_npm(pkg)):
-            n_ok += 1
-        if i % 100 == 0:
-            print(f"    {i}/{len(npm_names)} -> {n_ok} kept")
-        time.sleep(0.05)
-    print(f"  npm: {n_ok} docs with usable text")
-
-    # --- GitHub -----------------------------------------------------------
-    repos = discover_github(args.max_github)
-    print(f"fetching up to {len(repos)} READMEs from GitHub...")
-    n_ok = 0
-    for i, full in enumerate(repos, 1):
-        if add(fetch_github_readme(full)):
-            n_ok += 1
-        if i % 100 == 0:
-            print(f"    {i}/{len(repos)} -> {n_ok} kept")
-    print(f"  GitHub: {n_ok} docs with usable text")
-
-    # --- chunk ------------------------------------------------------------
-    print(f"chunking {len(docs)} documents...")
-    chunks: List[Dict[str, Any]] = []
-    for d in docs:
+        # Flush immediately: a sandbox reset should cost one request, not
+        # the entire run.
         try:
-            chunks.extend(mk.build_chunks(d))
+            for c in mk.build_chunks(d):
+                fh.write(json.dumps(c, ensure_ascii=False) + "\n")
+            fh.flush()
         except Exception as exc:
             print(f"    ! chunk failed for {d['name']}: {exc}")
+        return True
 
-    with out_path.open("w", encoding="utf-8") as f:
-        for c in chunks:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+    if not args.skip_pypi:
+        names = discover_pypi(args.max_pypi)
+        print(f"fetching up to {len(names)} packages from PyPI...")
+        n_ok = 0
+        for i, pkg in enumerate(names, 1):
+            if add(mk.fetch_pypi(pkg)):
+                n_ok += 1
+            if i % 100 == 0:
+                print(f"    {i}/{len(names)} -> {n_ok} kept")
+            time.sleep(0.05)
+        print(f"  PyPI: {n_ok} docs with usable text")
+
+    if not args.skip_npm:
+        names = discover_npm(args.max_npm)
+        print(f"fetching up to {len(names)} packages from npm...")
+        n_ok = 0
+        for i, pkg in enumerate(names, 1):
+            if add(mk.fetch_npm(pkg)):
+                n_ok += 1
+            if i % 100 == 0:
+                print(f"    {i}/{len(names)} -> {n_ok} kept")
+            time.sleep(0.05)
+        print(f"  npm: {n_ok} docs with usable text")
+
+    if not args.skip_github:
+        repos = discover_github(args.max_github, general=args.general)
+        print(f"fetching up to {len(repos)} READMEs from GitHub...")
+        n_ok = 0
+        for i, full in enumerate(repos, 1):
+            if add(fetch_github_readme(full)):
+                n_ok += 1
+            if i % 100 == 0:
+                print(f"    {i}/{len(repos)} -> {n_ok} kept")
+        print(f"  GitHub: {n_ok} docs with usable text")
+
+    fh.close()
+
+    chunks: List[Dict[str, Any]] = []
+    with out_path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                chunks.append(json.loads(line))
 
     by_source: Dict[str, int] = {}
     for c in chunks:
         by_source[c["source"]] = by_source.get(c["source"], 0) + 1
     wc = [c["word_count"] for c in chunks] or [0]
-    total_words = sum(wc)
     print()
     print(f"docs fetched      : {len(docs)}")
     print(f"chunks kept       : {len(chunks)} -> {out_path}")
     print(f"by source         : {by_source}")
-    print(f"total words       : {total_words:,}")
-    print(f"approx text size  : {total_words * 6 / 1e6:.1f} MB")
+    print(f"total words       : {sum(wc):,}")
+    print(f"approx text size  : {sum(wc) * 6 / 1e6:.1f} MB")
     print(f"chunk word count  : min={min(wc)} max={max(wc)} "
           f"avg={sum(wc)/len(wc):.1f}")
     return 0

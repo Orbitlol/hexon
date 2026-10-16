@@ -6,3 +6,9 @@ __pycache__/
 build/
 dist/
 .venv/
+
+# Local dependency install (survives sandbox resets, unlike /tmp)
+.deps/
+
+# Local dependency install (survives sandbox resets, unlike /tmp)
+.deps/
