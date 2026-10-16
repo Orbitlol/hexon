@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import collections
 import math
 import re
 import time
@@ -128,6 +129,11 @@ CAMEL_SPLIT_RE = re.compile(r"[A-Z]?[a-z]+|[A-Z]+(?=[A-Z]|$)|\d+")
 # between recall and on-device index size (a 5k chunk index costs ~41 MB at
 # 2048 dims in fp32, versus ~82 MB at 4096).
 DEFAULT_EMBEDDING_DIM = 2048
+
+# BM25 term-frequency saturation and length normalisation, used when
+# re-ranking ChromaDB candidates.
+_BM25_K1 = 1.5
+_BM25_B = 0.75
 
 
 def _stem_word(w: str) -> str:
@@ -1357,7 +1363,10 @@ class HexonChromaRAG:
         if total == 0 or not query.strip():
             return []
 
-        n_candidates = min(total, max(top_k * 6, 18))
+        # Widen the candidate pool. The vector stage only has to get the right
+        # chunk into the shortlist; re-ranking picks it out. At 18 candidates
+        # most of the index was never scored at all.
+        n_candidates = min(total, max(top_k * 20, 60))
         query_kwargs: Dict[str, Any] = {
             "query_texts": [query],
             "n_results": n_candidates,
@@ -1390,19 +1399,62 @@ class HexonChromaRAG:
                 metas_list = [core_res["metadatas"][0]] + list(metas_list)
                 dists_list = [0.25] + list(dists_list)
 
-        for cid, doc_text, meta, dist in zip(ids_list, docs_list, metas_list, dists_list):
-            cos_sim = max(0.0, 1.0 - float(dist))
+        # First pass: tokenise every candidate so we can weight query terms by
+        # how rare they are across the pool. The embedder has no IDF, so "the"
+        # used to count as much as "titanic".
+        pool = []
+        for cid, doc_text, meta, dist in zip(ids_list, docs_list, metas_list,
+                                             dists_list):
             doc_stems_list = extract_content_tokens(doc_text)
-            doc_stems = set(doc_stems_list)
+            pool.append((cid, doc_text, meta, dist, doc_stems_list,
+                         set(doc_stems_list)))
+
+        doc_freq: Dict[str, int] = {}
+        for _, _, _, _, _, doc_stems in pool:
+            for t in doc_stems:
+                doc_freq[t] = doc_freq.get(t, 0) + 1
+        n_pool = max(1, len(pool))
+        idf = {t: math.log(1.0 + n_pool / (1.0 + df))
+               for t, df in doc_freq.items()}
+        idf_total = sum(idf.get(t, math.log(1.0 + n_pool))
+                        for t in query_stems) or 1.0
+
+        # BM25 over the candidate pool. Plain term-count overlap saturates: a
+        # chunk that says "capital" six times outranks one that says it once
+        # and then names the city. BM25 saturates term frequency and
+        # normalises for chunk length.
+        pool_tf = [collections.Counter(row[4]) for row in pool]
+        pool_len = [max(1, len(row[4])) for row in pool]
+        avg_len = sum(pool_len) / n_pool
+        bm25_scores: List[float] = []
+        for i in range(len(pool)):
+            score = 0.0
+            for t in query_stems:
+                f = pool_tf[i].get(t, 0)
+                if not f:
+                    continue
+                denom = f + _BM25_K1 * (
+                    1.0 - _BM25_B + _BM25_B * pool_len[i] / avg_len)
+                score += idf.get(t, 0.0) * f * (_BM25_K1 + 1.0) / denom
+            bm25_scores.append(score)
+        bm25_max = max(bm25_scores) if bm25_scores else 0.0
+        if bm25_max > 0:
+            bm25_scores = [v / bm25_max for v in bm25_scores]
+
+        for _pi, (cid, doc_text, meta, dist, doc_stems_list,
+                  doc_stems) in enumerate(pool):
+            bm25 = bm25_scores[_pi]
+            cos_sim = max(0.0, 1.0 - float(dist))
             doc_bigrams = {
                 f"{doc_stems_list[i]}_{doc_stems_list[i + 1]}"
                 for i in range(len(doc_stems_list) - 1)
             }
-            overlap = (
-                len(query_stems & doc_stems) / max(1, len(query_stems))
-                if query_stems
-                else 0.0
-            )
+            if query_stems:
+                matched = sum(idf.get(t, math.log(1.0 + n_pool))
+                              for t in query_stems & doc_stems)
+                overlap = matched / idf_total
+            else:
+                overlap = 0.0
             bg_overlap = (
                 len(query_bigrams & doc_bigrams) / max(1, len(query_bigrams))
                 if query_bigrams
@@ -1420,7 +1472,9 @@ class HexonChromaRAG:
             if source in ("coding_reference", "hexon_docs", "hardware_specs", "encyclopedia"):
                 domain_bonus += 0.06
 
-            hybrid_score = round(0.55 * cos_sim + 0.45 * overlap + domain_bonus, 4)
+            hybrid_score = round(
+                0.30 * cos_sim + 0.50 * bm25 + 0.20 * overlap
+                + domain_bonus, 4)
             if hybrid_score >= min_score:
                 candidates.append(
                     RetrievedChunk(
