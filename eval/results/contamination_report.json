@@ -1,0 +1,50 @@
+{
+  "eval_items_checked": 58,
+  "corpora_checked": [
+    "data/curated/alpaca_knowledge.jsonl",
+    "data/curated/common_crawl_curated.jsonl",
+    "exports/hexon-nano-sft-dataset.jsonl"
+  ],
+  "jaccard_threshold": 0.6,
+  "contaminated_items": [
+    "legacy-04",
+    "legacy-05",
+    "legacy-06",
+    "legacy-08"
+  ],
+  "findings": [
+    {
+      "item_id": "legacy-04",
+      "set": "legacy_keyword_check",
+      "question": "What is photosynthesis?",
+      "corpus": "exports/hexon-nano-sft-dataset.jsonl",
+      "jaccard": 1.0,
+      "corpus_line": "what is photosynthesis"
+    },
+    {
+      "item_id": "legacy-05",
+      "set": "legacy_keyword_check",
+      "question": "Why is the sky blue?",
+      "corpus": "exports/hexon-nano-sft-dataset.jsonl",
+      "jaccard": 1.0,
+      "corpus_line": "why is the sky blue"
+    },
+    {
+      "item_id": "legacy-06",
+      "set": "legacy_keyword_check",
+      "question": "What is a prime number?",
+      "corpus": "data/curated/alpaca_knowledge.jsonl",
+      "jaccard": 1.0,
+      "corpus_line": "Explain what a prime number is."
+    },
+    {
+      "item_id": "legacy-08",
+      "set": "legacy_keyword_check",
+      "question": "How do you reverse a linked list?",
+      "corpus": "data/curated/alpaca_knowledge.jsonl",
+      "jaccard": 1.0,
+      "corpus_line": "Reverse a linked list."
+    }
+  ],
+  "clean": false
+}

@@ -183,6 +183,25 @@ class HexonConfig:
                 "bos_token_id": 1,
                 "eos_token_id": 2,
             },
+            # hexon-1.5 is hexon-1.2 widened by depth alone: same width, same
+            # vocabulary, 18 extra blocks. See scripts/train_15.py for the
+            # identity-initialisation that lets it start equal to hexon-1.2.
+            "hexon-1.5": {
+                "model_name": "hexon-1.5",
+                "vocab_size": vocab_size or 49152,
+                "hidden_size": 576,
+                "intermediate_size": 1536,
+                "num_hidden_layers": 48,
+                "num_attention_heads": 9,
+                "num_key_value_heads": 3,
+                "max_position_embeddings": 2048,
+                "rms_norm_eps": 1e-5,
+                "rope_theta": 100000.0,
+                "tie_word_embeddings": True,
+                "pad_token_id": 2,
+                "bos_token_id": 1,
+                "eos_token_id": 2,
+            },
         }
         if preset not in presets:
             raise ValueError(

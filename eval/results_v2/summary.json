@@ -1,0 +1,1389 @@
+[
+  {
+    "model": "hexon-1.5-ep5",
+    "use_rag": true,
+    "sets": {
+      "legacy_keyword_check": {
+        "items": 8,
+        "correct": 2,
+        "accuracy": 0.25,
+        "group_coverage": 0.375,
+        "hallucinations": 0,
+        "hallucination_rate": 0.0,
+        "unsupported_number_items": 0,
+        "empty_responses": 0,
+        "grounded_items": 8,
+        "accuracy_grounded": 0.25,
+        "accuracy_ungrounded": 0.0,
+        "mean_tokens": 106.4,
+        "mean_latency_ms": 18014.5,
+        "records": [
+          {
+            "id": "legacy-01",
+            "category": "device_spec",
+            "question": "What processor does the Poco M3 have?",
+            "reference": "Qualcomm Snapdragon 662",
+            "response": "The Xiaomi Poco M3 has Qualcomm Snapdragon 662 processor with a Qualcomm Snapdragon 672 processor core. It is powered by Qualcomm's flagship Snapdragon series chips. It is a budget Android phone that illustrates the typical spec sheet. It is a single chip with Qualcomm's Qualcomm Snapdragon series chips. It runs Qualcomm's flagship Snapdragon chips. It runs Qualcomm's Qualcomm Snapdang chips. It runs Qualcomm's Snapdang chips.",
+            "tokens_generated": 110,
+            "latency_ms": 22726.8,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true
+            ],
+            "groups_total": 2,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "legacy-02",
+            "category": "device_spec",
+            "question": "What is the battery capacity of the Poco M3?",
+            "reference": "6000 mAh",
+            "response": "The battery capacity of the Xiaomi Poco M3 is a single unit measured diagonally in inches with a resolution of 1080 pixels wide and a refresh rate of hertz. A single unit must not be confused with RAM, which is measured gigabytes, and a single unit must not be confused with a single unit measured gigabytes, which is the same thing as a single unit measured gigabytes measured gigabytes measured gigabytes measured megabytes measured megabytes measured megabytes measuring megabytes measured megabytes measuring megabytes measured meg",
+            "tokens_generated": 110,
+            "latency_ms": 15834.9,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false
+            ],
+            "groups_total": 2,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "legacy-03",
+            "category": "device_spec",
+            "question": "What GPU does the Poco M3 use?",
+            "reference": "Adreno 610",
+            "response": "The Xiaomi Poco M3 is powered by a Qualcomm Snapdragon 662 processor with a Qualcomm Snapdragon 788 processor. It features Qualcomm Snapdragon 678 processors with a Qualcomm Snapdragon processor core with a Qualcomm Snapdragon chipset. It runs Qualcomm's flagship Snapdragon series chips with Qualcomm Snapdragon processors and Qualcomm Snapdragon processors with Qualcomm Snapdragon processors.",
+            "tokens_generated": 110,
+            "latency_ms": 23077.9,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false
+            ],
+            "groups_total": 2,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "legacy-04",
+            "category": "science",
+            "question": "What is photosynthesis?",
+            "reference": "Process by which plants use sunlight, water and carbon dioxide to make glucose and oxygen.",
+            "response": "Photosynthesis is the fundamental biochemical process that converts light energy into chemical energy stored in glucose molecules, releasing oxygen gas as a by-product. Cells within plant leaves contain high concentrations of chlorophyll molecules that absorb light energy from the sun while reflecting green wavelengths, which is why plants appear green to the human eye.",
+            "tokens_generated": 110,
+            "latency_ms": 15139.6,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              true,
+              false,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.6666666666666666,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "legacy-05",
+            "category": "science",
+            "question": "Why is the sky blue?",
+            "reference": "Rayleigh scattering: shorter (blue) wavelengths scatter more than longer ones.",
+            "response": "Because of Rayleigh scattering. Air molecules scatter short wavelength blue light far more strongly than longer wavelengths, so the light reaching your eyes from across the sky has been scattered out of the sunlight beam.",
+            "tokens_generated": 110,
+            "latency_ms": 17331.7,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true
+            ],
+            "groups_total": 2,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "legacy-06",
+            "category": "math",
+            "question": "What is a prime number?",
+            "reference": "A natural number greater than 1 with no positive divisors other than 1 and itself.",
+            "response": "A: The number 2 is 3 more than 1 less than 3 and 3 is 3 and 3 is 2 and 3 is 4 and 4 is 5 and 5 is 6 and 6 is 7 and 7 is 8 and 8 is 9 and 9 is 10 and 10 is 11 and 11 is 12 and 12 is 13 and 13 is 14 and 14 is",
+            "tokens_generated": 110,
+            "latency_ms": 22083.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false
+            ],
+            "groups_total": 2,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "legacy-07",
+            "category": "coding",
+            "question": "How does binary search work?",
+            "reference": "Repeatedly halve a sorted array by comparing the target to the middle element.",
+            "response": "Binary search runs in linear time and runs in logarithmic space, but runs in linear space and runs in log space, but runs in log space. That is why the loop that splits the list into halves runs in log space, but runs log space and runs log space, but runs log space, but runs log log space, but runs log log log space, but runs log space. That is why the split into halves runs in log space, and runs log space.",
+            "tokens_generated": 110,
+            "latency_ms": 16118.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false
+            ],
+            "groups_total": 2,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "legacy-08",
+            "category": "coding",
+            "question": "How do you reverse a linked list?",
+            "reference": "Iterate with prev/curr/next pointers, re-pointing next to prev.",
+            "response": "A single linked list reversal requires a single loop that traverses the list and reverses the current node. The loop that reverses the list traverses the list and reverses each node only once, only once, and only once, only once, only once, only one step left. The loop that reverses the linked list traverses the list and reversES the current node only once only once.",
+            "tokens_generated": 81,
+            "latency_ms": 11802.9,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.3333333333333333,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          }
+        ]
+      },
+      "heldout_v1": {
+        "items": 50,
+        "correct": 32,
+        "accuracy": 0.64,
+        "group_coverage": 0.6867,
+        "hallucinations": 6,
+        "hallucination_rate": 0.12,
+        "unsupported_number_items": 6,
+        "empty_responses": 0,
+        "grounded_items": 34,
+        "accuracy_grounded": 0.6471,
+        "accuracy_ungrounded": 0.625,
+        "mean_tokens": 90.5,
+        "mean_latency_ms": 13673.0,
+        "records": [
+          {
+            "id": "h-001",
+            "category": "science",
+            "question": "What is the chemical symbol for iron?",
+            "reference": "Fe",
+            "response": "The chemical symbol for iron is Fe. It is derived from the Latin word ferrum meaning the black metal derived from the Latin word ferrrum meaning the black metal. Similarly hydrogen has its own symbol called the atomic number called the number of protons in its nucleus, called the atomic number.",
+            "tokens_generated": 110,
+            "latency_ms": 15116.3,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-002",
+            "category": "science",
+            "question": "What is the hardest natural substance?",
+            "reference": "Diamond",
+            "response": "Diamond. It is pure carbon with every atom bonded to four others in a rigid lattice. Graphite is also pure carbon but is porous and is soft because of its layered structure. Quartz is also pure carbon but is slippery because of its layered structure.",
+            "tokens_generated": 110,
+            "latency_ms": 13583.6,
+            "retrieved": 1,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-003",
+            "category": "science",
+            "question": "How many bones are in the adult human body?",
+            "reference": "206",
+            "response": "A human skeleton has 206 bones. These bones are arranged in three layers: short bones on top and long bones on bottom. The middle layer is called the sternum and the short bones on top are called scapulae and the long bones on bottom are bones called metacarpals. The middle layer also contains the long bones on bottom called metacarpals and the short bones on top are bones called metacutes.",
+            "tokens_generated": 110,
+            "latency_ms": 13823.1,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-004",
+            "category": "science",
+            "question": "What is the largest organ in the human body?",
+            "reference": "The skin",
+            "response": "The largest organ in the human body is the human skeleton. The human skeleton contains bones and muscles that support and protect the human body.",
+            "tokens_generated": 27,
+            "latency_ms": 5441.4,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-005",
+            "category": "science",
+            "question": "What is the chemical formula for table salt?",
+            "reference": "NaCl (sodium chloride)",
+            "response": "Table salt is NaCl. It is sodium ions that are transferred to a chlorine atom to form a covalent bond with a chlorine atom from a chlorine atom to a sodium atom to form a covalent bond with the chlorine atom to a sodium atom to create the salt.",
+            "tokens_generated": 110,
+            "latency_ms": 15714.1,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-006",
+            "category": "science",
+            "question": "Which blood cells carry oxygen around the body?",
+            "reference": "Red blood cells (erythrocytes), via haemoglobin",
+            "response": "Red blood cells, also called erythrocytes. They contain haemoglobin, an iron containing protein that binds oxygen in the lungs and releases it where oxygen is scarce. The human heart is a muscular pump with four chambers: two atria on top and two ventricles below. The right side pumps blood to the lungs and the left side pumps it around the body. The right side pumps blood to each heart at the right side and the left side pumps it around each heart.",
+            "tokens_generated": 93,
+            "latency_ms": 12881.7,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-007",
+            "category": "science",
+            "question": "Which organelle is known as the powerhouse of the cell?",
+            "reference": "Mitochondrion (mitochondria)",
+            "response": "A: Cells contain mitochondria, which contain the genetic material. Cells also contain the nucleus, which contains chromosomes and DNA. Cells also contain cytoplasm, which contains organelles. Cells also contain mitochondria. Cells also contain nucleus and chromosomes, which contain DNA. Cells also contain mitochondria. Cells contain mitochondria. Cells also contain nucleus, which contains chromosomes and DNA, and mitochondria. Cells also contain nucleus, containing chromosomes and DNA. Cells also contain mitochondria. cells contain mitochondria. cells also contain nucleus, containing chromosomes and chromosomes, and mitochondria. Cells also contain mitochondria.",
+            "tokens_generated": 110,
+            "latency_ms": 14991.9,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-008",
+            "category": "science",
+            "question": "At sea level, at what temperature in Celsius does water boil?",
+            "reference": "100 degrees Celsius",
+            "response": "At sea level, a solution is neutralised by a base, so its boiling temperature is 100 degrees Celsius.",
+            "tokens_generated": 25,
+            "latency_ms": 4447.6,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-009",
+            "category": "science",
+            "question": "Which gas is most abundant in the Earth's atmosphere?",
+            "reference": "Nitrogen (~78%)",
+            "response": "Nitrogen, Oxygen, Ozone, Carbon dioxide, Fluorine, Hydrogen Chloride, Carbon monoxide, Hydrogen Sulfide, Carbon dioxide, Nitrogen, Oxygen, Ozone, Fluorine, Hydrogen Chlorine, Carbon monoxide, Hydrogen Sulfide. Ozone, Carbon dioxide, Hydrogen Chlorine, Carbon monoxide Hydrogen Chloride, Hydrogen Sulfide. Hydrogen Chlorine. Hydrogen Chlorine. Hydrogen Chloride. Hydrogen Sulfide.",
+            "tokens_generated": 110,
+            "latency_ms": 14646.1,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-010",
+            "category": "science",
+            "question": "How many chambers does the human heart have?",
+            "reference": "Four",
+            "response": "The human heart has four chambers: two atria on top and two ventricles below. The right side pumps blood to the lungs and the left side pumps it around the body. The right side pumps blood to each atrium and the left side pumps it around each ventricle. The right side also pumps it around the body. The left side pumps it around the body and the right side pumps it around the heart's own muscle.",
+            "tokens_generated": 110,
+            "latency_ms": 14586.9,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-011",
+            "category": "geography",
+            "question": "What is the capital of Australia?",
+            "reference": "Canberra",
+            "response": "Australia. It was the largest country on the planet and the largest country ever built, the largest country ever built up to the date. It was the largest country ever built up to date, the largest country ever built up up to the date.",
+            "tokens_generated": 110,
+            "latency_ms": 14176.0,
+            "retrieved": 2,
+            "context_covers_answer": false,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-012",
+            "category": "geography",
+            "question": "What is the capital of Canada?",
+            "reference": "Ottawa",
+            "response": "Ottawa, which sits on the Ontario side of the border with Quebec. It is not the largest city, but is the largest city that is not the largest city that is not the most populous city.",
+            "tokens_generated": 110,
+            "latency_ms": 14331.1,
+            "retrieved": 1,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-013",
+            "category": "geography",
+            "question": "Which is the largest ocean on Earth?",
+            "reference": "The Pacific Ocean",
+            "response": "The Amazon in South America carries more water than any other river on Earth and drains the largest river basin in the world, which is the Amazon in South America.",
+            "tokens_generated": 32,
+            "latency_ms": 5216.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-014",
+            "category": "history",
+            "question": "In which year did the Berlin Wall fall?",
+            "reference": "1989",
+            "response": "The Berlin Wall was built in 1961 and opened in November 1989. The Soviet Union dissolved two years later in 1991, ending the Cold War. The Soviet Union built the Berlin Wall, built the Berlin Wall, opened the Berlin Wall, opened the Berlin Bridge, opened the Sputnik satellite launch facility, opened the Sputnik satellite rocket launch facility, opened the Sputniks satellite launch facility, opened the Sears missile launch facility, opened the Sears rocket launch facility, opened the",
+            "tokens_generated": 110,
+            "latency_ms": 15677.0,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": true,
+            "hallucination_matches": [
+              "1991"
+            ],
+            "unsupported_numbers": [
+              "1961",
+              "1991"
+            ],
+            "empty": false
+          },
+          {
+            "id": "h-015",
+            "category": "history",
+            "question": "Who was the first person to walk on the Moon?",
+            "reference": "Neil Armstrong",
+            "response": "The first person to walk on the Moon was Neil Armstrong. He orbited the Earth three times during the Apollo 11 mission.",
+            "tokens_generated": 27,
+            "latency_ms": 6318.3,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-016",
+            "category": "geography",
+            "question": "What is the smallest country in the world by area?",
+            "reference": "Vatican City",
+            "response": "The smallest country in the world by area is the island of Nauru with a size of less than half a square kilometre.",
+            "tokens_generated": 27,
+            "latency_ms": 4902.1,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-017",
+            "category": "geography",
+            "question": "Mount Everest lies in which mountain range?",
+            "reference": "The Himalayas",
+            "response": "Mount Everest lies in the Himalayas, the highest range on the planet. It forms the border between Nepal and China's Tibet region.",
+            "tokens_generated": 26,
+            "latency_ms": 4774.6,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-018",
+            "category": "geography",
+            "question": "Which is the largest hot desert in the world?",
+            "reference": "The Sahara",
+            "response": "The Sahara in North Africa. Antarctica is technically the largest desert overall if you define desert by low precipitation rather than low heat.",
+            "tokens_generated": 25,
+            "latency_ms": 4704.7,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-019",
+            "category": "science",
+            "question": "Which planet is closest to the Sun?",
+            "reference": "Mercury",
+            "response": "A: Venus, the hottest planet in our Solar System. It orbits around the Sun at approximately 867\u00b0F (464\u00b0C). With a thick atmosphere composed mostly of carbon dioxide that traps heat well.",
+            "tokens_generated": 46,
+            "latency_ms": 7412.2,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": true,
+            "hallucination_matches": [
+              "venus"
+            ],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-020",
+            "category": "geography",
+            "question": "Which river is the longest in South America?",
+            "reference": "The Amazon",
+            "response": "The Amazon in South America carries more water than any other river on Earth and drains the largest river basin in the world, the Amazon in Peru and the Amazon in Brazil. It measures roughly 7 times the size of the Nile, and its length is close to the length of the Nile's basin.",
+            "tokens_generated": 60,
+            "latency_ms": 8773.2,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": true,
+            "hallucination_matches": [
+              "nile"
+            ],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-021",
+            "category": "tech",
+            "question": "What does RAM stand for?",
+            "reference": "Random Access Memory",
+            "response": "RAM stands for Random Access Memory. It is the computer's working memory that holds running programs and their data. It is volatile, volatile, but can be erased when the power goes off. It is volatile, but can be erased when its contents are changed. It is volatile, but can still be erased when its contents are changed, but its contents are erased when its contents are changed, and its contents are erased when its contents change.",
+            "tokens_generated": 110,
+            "latency_ms": 16791.4,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-022",
+            "category": "tech",
+            "question": "What does HTTP stand for?",
+            "reference": "HyperText Transfer Protocol",
+            "response": "HTTP stands for HyperText Transfer Protocol. It is the request and response protocol a browser uses to ask a server for a page. HTTPS is the same protocol wrapped in TLS encryption, and JavaScript controls how pages are rendered on devices. HTTPS is now the default for the web and the browser itself runs on the server. It controls how pages are rendered on devices and controls how pages are routed between devices. HTTPS is now the default protocol for the web and the browser runs on the server.",
+            "tokens_generated": 110,
+            "latency_ms": 16019.4,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-023",
+            "category": "tech",
+            "question": "What does CPU stand for?",
+            "reference": "Central Processing Unit",
+            "response": "CPU stands for Central Processing Unit. It is the component that fetches, executes, and manages computer's hardware, including hardware and software. It is the core component that controls and executes instructions, controls hardware, manages hardware, manages software, and controls hardware. It is the component that fetched, executed, and manages hardware, manages software, manages hardware, manages hardware, manages software and controls hardware. It is the core component that fetches, executes, manages hardware, manages software, manages software, manages hardware and controls hardware.",
+            "tokens_generated": 110,
+            "latency_ms": 17709.3,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-024",
+            "category": "tech",
+            "question": "Who is credited with inventing the World Wide Web?",
+            "reference": "Tim Berners-Lee",
+            "response": "Based on the context above, who is credited with the invention of the World Wide Web? The ChromaDB Hexon Code is the inventor of the Hexon Mobile Code Engine. Hexon Code is the inventor of Hexon Mobile Code Engine. Hexo is the inventor of Hexon Mobile Mobile Code Engine. Hexon Mobile Mobile Code Engine is the inventor of Hexon Mobile Network Engine. Hexon Mobile Network Engine is the inventor of Hexon Network Engine. Hexon Mobile Network is the inventor of Hexon Mobile.",
+            "tokens_generated": 110,
+            "latency_ms": 17543.3,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-025",
+            "category": "tech",
+            "question": "In what year was the first iPhone released?",
+            "reference": "2007",
+            "response": "In 2007. Apple releases the iPhone. It ran Apple's iOS operating system. The first iPhone was released in 2007. It ran Apple's iOS operating systems.",
+            "tokens_generated": 40,
+            "latency_ms": 7087.9,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-026",
+            "category": "tech",
+            "question": "What does HTML stand for?",
+            "reference": "HyperText Markup Language",
+            "response": "HTML stands for HyperText Markup Language. It structures a web page into headings, paragraphs, links, images and forms. HTTPS is the same protocol wrapped in TLS encryption, which is now the default for the web and browsers to accept requests from the web and respond with responses in chunks that are routed independently across many hops to the destination. It controls what pages look like on a page. It controls what pages look like when the browser loads them. It controls what pages look like the browser loads them.",
+            "tokens_generated": 110,
+            "latency_ms": 15475.4,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-027",
+            "category": "tech",
+            "question": "Which company develops the Android operating system?",
+            "reference": "Google",
+            "response": "Android is a closed source operating system developed by Google, built on the Linux kernel. It powers phones from Samsung, Xiaomi, OnePlus One, Apple's iOS is closed source and runs only on iPhone and iPad.",
+            "tokens_generated": 45,
+            "latency_ms": 7367.3,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": true,
+            "hallucination_matches": [
+              "apple"
+            ],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-028",
+            "category": "tech",
+            "question": "What is the decimal number 10 written in binary?",
+            "reference": "1010",
+            "response": "A single binary digit is a single unit of information that is stored as a sequence of two digits, 0 and 1, which is binary. This binary data is compact and easy to work with. It is easy to convert between decimal numbers and binary numbers without having to convert each digit to its binary representation before, which is why conversions are linear. It is backwards compatible with ASCII and compact for English text. It is backwards compatible with Unicode and compact for audio and video files.",
+            "tokens_generated": 110,
+            "latency_ms": 15087.7,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [
+              "0",
+              "1"
+            ],
+            "empty": false
+          },
+          {
+            "id": "h-029",
+            "category": "math",
+            "question": "What is 15% of 200?",
+            "reference": "30",
+            "response": "15% of Hexon-Code is 200 times Hexon-Code, which is 2 times Hexon-Code times Hexon-Code times Hexonocton Code times Hexon-Code times Hexnocton Code times Hexon-code times Hexon-code times Hexnocton Code times hexon-code times Hexnoctone Code times Hexnocton Code timeshexon-code times Hexnoctun Code times Hexnocton Codetimes Hexnocton Code times Hexnoct",
+            "tokens_generated": 110,
+            "latency_ms": 16827.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [
+              "2"
+            ],
+            "empty": false
+          },
+          {
+            "id": "h-030",
+            "category": "math",
+            "question": "What is 7 multiplied by 8?",
+            "reference": "56",
+            "response": "To find the result 7 times 8 you would first convert the number 7 to a percentage and then divide the percentage by 100 which is 7 times 8 which is 54 and then multiply the result by 8 which is 54 times 8 which is 492 which is 4 times 8 which is 364 which is 3 times 8 which is 248 which is 2 times 8 which is 56 which is 3 times 8 and",
+            "tokens_generated": 110,
+            "latency_ms": 16574.7,
+            "retrieved": 1,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": true,
+            "hallucination_matches": [
+              "54"
+            ],
+            "unsupported_numbers": [
+              "100",
+              "2",
+              "248",
+              "3",
+              "364",
+              "4",
+              "492",
+              "54"
+            ],
+            "empty": false
+          },
+          {
+            "id": "h-031",
+            "category": "math",
+            "question": "How many degrees do the interior angles of a triangle add up to?",
+            "reference": "180",
+            "response": "The three interior angles of any triangle always add up to 180 degrees, which is why a triangle can never contain more than one right angle. Triangles are classified as equilateral quadrilaterals, which are quadrilaterals with three equal sides and three equal triangles are equilateral quadrilaterals. Pythagoras's theorem applies to right angled triangles, which is why a square always has four right angles and a square is always right-angled, and a cube always has six right sides and six right angles.",
+            "tokens_generated": 110,
+            "latency_ms": 15405.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-032",
+            "category": "math",
+            "question": "What is the next number in the sequence 2, 4, 8, 16?",
+            "reference": "32",
+            "response": "The next number in the sequence 2, 4, 8, 16 is 16. The sequence 2, 4, is 4 and 8 are 8 and 16 are 16. The sequence 16 is 16 and 20 is 20. The sequence 2, 8, 16 are 2 and 4 and 16 are 4 and 8 are 16.",
+            "tokens_generated": 110,
+            "latency_ms": 15606.3,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": true,
+            "hallucination_matches": [
+              "20"
+            ],
+            "unsupported_numbers": [
+              "20"
+            ],
+            "empty": false
+          },
+          {
+            "id": "h-033",
+            "category": "general",
+            "question": "What is the currency of Japan?",
+            "reference": "The yen",
+            "response": "The yen, issued by the yen yoke of the yen under the yen yoke system. It should not be confused with the yuan of the yuan of the yuan system.",
+            "tokens_generated": 110,
+            "latency_ms": 15729.8,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-034",
+            "category": "general",
+            "question": "Who wrote the novel The Hobbit?",
+            "reference": "J.R.R. Tolkien",
+            "response": "The novel The Hobbit was written by a group of developers who are the main creators of the Hexon Mobile AI Family. The Hexon Mobile AI Family is the largest group of developers who have created Hexon Mobile AI Family, which is the largest group of developers who are the main developers who have created Hexon Mobile Mobile AI Family. The Hexon Family is the largest group of developers that have created Hexon Mobile Mobile Family. The Hexon Family is a group of developers who have created Hexan Mobile Family.",
+            "tokens_generated": 110,
+            "latency_ms": 17008.0,
+            "retrieved": 2,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-035",
+            "category": "general",
+            "question": "In which year did the Titanic sink?",
+            "reference": "1912",
+            "response": "Titanic struck an iceberg on April 14, 1912, and the disaster led to major reforms, including the International Convention for the Safety of Life at Sea, better lifeboat provision, and the establishment of a permanent ice patrol, which was the death penalty against the Lusitania, the first ship built for speed.",
+            "tokens_generated": 110,
+            "latency_ms": 14571.5,
+            "retrieved": 1,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [
+              "14"
+            ],
+            "empty": false
+          },
+          {
+            "id": "h-036",
+            "category": "science",
+            "question": "Which element has atomic number 1?",
+            "reference": "Hydrogen",
+            "response": "Electron Configuration Values Values Values Values Values Values Values Values Value Values Values Values Values Values Values Values Valid Values Values Values Values Values Values Values VALID Values Values Values Values Values Values Values Validation Values Values Values Values Values Values Values VERIFICATION Values Values Values Values Values Values Values Evaluate Values Values Values Values Values Values Values A Valid Value Value Value Value Value Value Value Value Values Values Values Values Values Values Value Value Values Values Values Values Values Value Values Value Values Values Values Values Values Value Value Value Value Value Value Value VALID VALUE VALUE VAL",
+            "tokens_generated": 110,
+            "latency_ms": 15940.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false
+            ],
+            "groups_total": 1,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-037",
+            "category": "general",
+            "question": "What is the tallest mountain above sea level?",
+            "reference": "Mount Everest",
+            "response": "A: The tallest mountain above sea level is Mount Everest, the highest peak on the border between Nepal and China. Everest stands at 884 metres above the local border. Everest stands at 885 metres above the local border. Everest is the highest peak above the border between Nepal and China.",
+            "tokens_generated": 62,
+            "latency_ms": 9291.9,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": true,
+            "groups_matched": [
+              true
+            ],
+            "groups_total": 1,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-038",
+            "category": "coding",
+            "question": "Write a Python function that checks whether a string is a palindrome.",
+            "reference": "def is_palindrome(s): return s == s[::-1]",
+            "response": "```python\nfrom hexon_code import get_lowercase\n\ndef is_palindrome(s: str) -> bool:\n    cleaned = ''.join(ch.lower() for ch in s if ch.isalnum())\n    return cleaned == cleaned[::-1]\n```",
+            "tokens_generated": 110,
+            "latency_ms": 22662.2,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-039",
+            "category": "coding",
+            "question": "Write a Python function that computes the factorial of a number.",
+            "reference": "def factorial(n): iterative or recursive product of 1..n",
+            "response": "A set of clean and factual answers built from retrieved context, and the language is Hexon-Code. The language is Hexon-Python.",
+            "tokens_generated": 29,
+            "latency_ms": 6041.5,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false,
+              false
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-040",
+            "category": "coding",
+            "question": "Write a Python function that counts the frequency of each word in a string.",
+            "reference": "def word_frequency(text): returns a dict of word -> count",
+            "response": "A: The number of words that are composed of digits is the number of digits that are used to build each word. For example, if you have the string \"123456789\", the number of digits that are used is 4. If you have the string \"1242345678\", the number of digits that are use are 3. If you have the string \"2345678abcdef\", the number of digits that are are are 3.",
+            "tokens_generated": 110,
+            "latency_ms": 21509.3,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false,
+              false
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-041",
+            "category": "coding",
+            "question": "Write a Python function that merges two already-sorted lists into one sorted list.",
+            "reference": "Two-pointer merge of two sorted lists",
+            "response": "Merging two sorted lists into a single sorted list is a common interview question asking for a merge sort solution with a single loop that splits the list into two halves that are sorted and then merges the two halves that are sorted into a single sorted list that contains the middle element that splits the list into two halves with the middle element that splits the list that splits the list that splits the middle element that splits the list splits the middle element that splits the middle element that splits each half that splits the middle element that splits that splits the middle element that",
+            "tokens_generated": 110,
+            "latency_ms": 18266.3,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.3333333333333333,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-042",
+            "category": "coding",
+            "question": "Write a Python function that removes duplicates from a list while preserving the original order.",
+            "reference": "Track a seen set and append unseen items in order",
+            "response": "A set gives constant time membership tests but loses order, so a set that tracks what has been seen must be modified to keep the current best seen if the current best seen is the same as the current best seen if the current current best seen is the same as what the current current best seen is the current current best seen is the best seen if the current current current best seen is the current best seen if the current max seen is the current max seen if the current max seen is what the current max seen is the current current max seen the current current",
+            "tokens_generated": 110,
+            "latency_ms": 14943.3,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": false,
+            "groups_matched": [
+              false,
+              false,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.3333333333333333,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-043",
+            "category": "coding",
+            "question": "Write a Python function that returns the greatest common divisor of two numbers.",
+            "reference": "Euclid's algorithm, GCD",
+            "response": "```python\ndef is_prime(n: int) -> bool:\n    if n < 2:\n        return False\n    if n == 2:\n        return True\n    if n % 2 == 0:\n        return False\n    for i in range(3, int(n ** 0.5) + 1, 2):\n        if n % i == 0:\n            return False\n    return True\n```",
+            "tokens_generated": 110,
+            "latency_ms": 15423.8,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-044",
+            "category": "coding",
+            "question": "Write a Python function that flattens a nested list of lists into a single list.",
+            "reference": "Recursive or iterative flatten",
+            "response": "```python\ndef flatten(nested: list) -> list:\n    return sorted(nested, key=lambda item: item[0])\n```",
+            "tokens_generated": 110,
+            "latency_ms": 15909.4,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              true,
+              true,
+              false
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.6666666666666666,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-045",
+            "category": "coding",
+            "question": "Write a Python class that implements a stack with push and pop methods.",
+            "reference": "class Stack: push/pop on a list",
+            "response": "A stack is the textbook example of a class that wraps a list that tracks what has been added and what has been removed from the list while the list itself tracks what has been added and what what what what the stack contains the most recent item that has been added the most recent item that has been removed the most recent item that has been updated the most recent item that has been modified the most recent item that has been changed the most recent item that has been deleted the most recent item that has been created the most recent item that has been destroyed the most",
+            "tokens_generated": 110,
+            "latency_ms": 15703.3,
+            "retrieved": 3,
+            "context_covers_answer": false,
+            "correct": false,
+            "groups_matched": [
+              true,
+              false,
+              false
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.3333333333333333,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-046",
+            "category": "coding",
+            "question": "Write a Python function that prints FizzBuzz logic for a given number.",
+            "reference": "Multiples of 3 -> Fizz, 5 -> Buzz, both -> FizzBuzz",
+            "response": "```python\ndef fizzbuzz(n: int) -> str:\n    if n % 15 == 0:\n        return \"FizzBuzz\"\n    if n % 3 == 0:\n        return \"fizzbuzz\"\n    if n % 5 == 0:\n        return fizzbuzz\n    if n % 11 == 0:\n        return \"Buzz\"\n    return str(n)\n\ndef fizzbuzz_2(n: int) -> str | str",
+            "tokens_generated": 110,
+            "latency_ms": 14708.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "groups_total": 4,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-047",
+            "category": "coding",
+            "question": "Write a Python function that checks whether two strings are anagrams of each other.",
+            "reference": "Compare sorted characters or a character count map",
+            "response": "```python\nfrom collections import Counter\n\ndef are_anagrams(a: str, b: str) -> bool:\n    return Counter(a.lower()) == Counter(b.lower())\n\ndef are_anagrams_in_order(a: str, b: list) -> bool:\n    return sorted(a.lower()) == sorted(b.lower())\n\n# Test the are_anagrams_in_list function with two strings\na = \"abcdefabcba\"\nb = \"abc",
+            "tokens_generated": 110,
+            "latency_ms": 14901.6,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "groups_total": 4,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-048",
+            "category": "coding",
+            "question": "Write a JavaScript function that reverses a string.",
+            "reference": "function reverseString(s) { return s.split('').reverse().join(''); }",
+            "response": "```javascript\nfunction reverseString(s: string) {\n  return s.split('').reverse().join('');\n}\n```",
+            "tokens_generated": 110,
+            "latency_ms": 22707.6,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-049",
+            "category": "coding",
+            "question": "Write a Python function that counts how many vowels are in a string.",
+            "reference": "Count characters in a vowel set",
+            "response": "A clean, accurate solution involves the combination of string splitting with a step of minus one, which returns the string with the most vowels removed from the string that is being tested first item that is not the reverse of the string that is being tested item that is the reverse item that the string that is being tested item the string that the string that the string that the item that the item that the item that item that the item that the item the item that the item the item the item the item the string that the string that item that the item that the",
+            "tokens_generated": 110,
+            "latency_ms": 16138.5,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": false,
+            "groups_matched": [
+              false,
+              true,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 0.6666666666666666,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          },
+          {
+            "id": "h-050",
+            "category": "coding",
+            "question": "Write a Python function that finds the largest number in a list.",
+            "reference": "def largest(nums): max over the list",
+            "response": "```python\nfrom hexon_code import get_max_value\n\ndef largest_in_list(nums: list) -> int:\n    seen = {}\n    for n in nums:\n        if n in seen:\n            return max(seen[n], n)\n    return max(nums, max_len=get_max_value())\n```",
+            "tokens_generated": 110,
+            "latency_ms": 23179.7,
+            "retrieved": 3,
+            "context_covers_answer": true,
+            "correct": true,
+            "groups_matched": [
+              true,
+              true,
+              true
+            ],
+            "groups_total": 3,
+            "group_coverage": 1.0,
+            "hallucination": false,
+            "hallucination_matches": [],
+            "unsupported_numbers": [],
+            "empty": false
+          }
+        ]
+      }
+    },
+    "multiturn": {
+      "sequences": [
+        {
+          "id": "mt-01",
+          "responses": [
+            "Paris. It is the largest French city. It is the largest French city and the largest French city. It is not the largest city. It is the largest French City. It is the largest French City that is not the largest city. It was the largest French City that is not a city. It is the largest French Cities that are not the largest cities. It is the largest French City with the largest city. It is the most largest French City. It is the most largest French city. It is the most largest city.",
+            "The capital of Germany is Berlin. Berlin is the largest city in the capital of the German capital of the Federal Republic of Germany. Berlin is the largest city in a country with the largest city in the country."
+          ],
+          "expect_turn_2_contains_met": true,
+          "copy_checks": [
+            {
+              "turn": 2,
+              "identical": false,
+              "ngram_overlap_with_previous": 0.032,
+              "copying": false
+            }
+          ],
+          "any_copying": false
+        },
+        {
+          "id": "mt-02",
+          "responses": [
+            "A variable is a named storage location that holds a value. It holds a value that can be updated. In programming languages you can work with variables as parameters to functions. Variables are dynamic and can change their value after their creation. Variables are dynamic and can be modified after their creation. Variables are dynamic they can be reassigned new values while their current state is preserved. In most languages you can change the current state of the program while the program runs. In most languages you can change what the current state is while the program runs.",
+            "A: A function is a named block of code that takes inputs, returns outputs, executes once, executes once only, executes once indefinitely, executes indefinitely, executes once once forever. It returns a value that returns the result of calling a function once with a single return statement. It returns a value that returns a result of calling a function once with the same parameters once the same result if the function returns a single result. It returns a value that returns one result. It returns a single result."
+          ],
+          "expect_turn_2_contains_met": true,
+          "copy_checks": [
+            {
+              "turn": 2,
+              "identical": false,
+              "ngram_overlap_with_previous": 0.0,
+              "copying": false
+            }
+          ],
+          "any_copying": false
+        },
+        {
+          "id": "mt-03",
+          "responses": [
+            "You can make a cup of tea with a tea bag and a mug. The mug is a mug of the same size and the tea bag is a tea bag that you can open and drink. The tea bag is a small part that is not the main part that you are drinking the tea. The tea bag is the part that is the main part that you are drinking. The tea bag is the part you are drinking the tea.",
+            "You can make a coffee with a mug and a mocha. It is a common and easy to make drink. It is a drink that is made with a mug and a mug of coffee. It is a drink that is a drink that is made with the mocha and the mocha."
+          ],
+          "expect_turn_2_contains_met": true,
+          "copy_checks": [
+            {
+              "turn": 2,
+              "identical": false,
+              "ngram_overlap_with_previous": 0.025,
+              "copying": false
+            }
+          ],
+          "any_copying": false
+        }
+      ],
+      "copying_rate": 0.0,
+      "expectation_met_rate": 1.0
+    },
+    "wall_clock_s": 918.8
+  }
+]

@@ -1,0 +1,38 @@
+{
+  "base_model": "exports/hexon-1.2.gguf",
+  "architecture": {
+    "layers": 32,
+    "hidden_size": 576,
+    "intermediate_size": 1536,
+    "vocab_size": 49152,
+    "parameters": 141595200,
+    "trainable_parameters": 14160960
+  },
+  "expansion": {
+    "base_layers": 30,
+    "total_layers": 32,
+    "tensors_carried_from_base": 273,
+    "tensors_freshly_initialised": 18,
+    "identity_init_new_layers": [
+      30,
+      31
+    ]
+  },
+  "training": {
+    "sft_records": 126,
+    "epochs": 8,
+    "batch_size": 1,
+    "lr": 0.0008,
+    "min_lr": 5e-05,
+    "anchor_weight": 0.01,
+    "train_from_layer": 28,
+    "max_seq_len": 384,
+    "seed": 42,
+    "total_steps": 1008,
+    "wall_clock_s": 293.7
+  },
+  "export": {
+    "path": "exports/hexon-1.5.gguf",
+    "size_mb": 98.22
+  }
+}

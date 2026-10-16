@@ -1,0 +1,579 @@
+{
+  "schema": "hexon-heldout-eval-v1",
+  "created": "2026-10-15",
+  "description": "Held-out evaluation set for Hexon models. Two subsets: (A) the original 8-item keyword check, retained for continuity but contaminated for hexon-1.2 (those exact questions were used in its 14-pair fine-tune, so its score there is NOT valid evidence); (B) a fresh held-out set of questions that appear in no Hexon training corpus. Set B is the only set that supports model-vs-model comparison.",
+  "scoring_notes": [
+    "must_include is a list of ALIAS GROUPS. Each group is a list of alternative case-insensitive regexes; at least one regex in each group must match. All groups must be satisfied for the item to count as correct (AND over groups, OR within a group).",
+    "must_not is a list of case-insensitive regexes; a match marks the item as a hallucination.",
+    "unsupported_number is computed only for items with check_unsupported_number=true: any number in the response that appears neither in the question nor in the reference. It is a noisy proxy and is reported separately, never folded into accuracy."
+  ],
+  "sets": [
+    {
+      "id": "legacy_keyword_check",
+      "purpose": "Continuity with the keyword check used since hexon-135m. NOT a fair comparison for hexon-1.2.",
+      "contaminated_for": ["hexon-1.2"],
+      "items": [
+        {
+          "id": "legacy-01",
+          "category": "device_spec",
+          "question": "What processor does the Poco M3 have?",
+          "reference": "Qualcomm Snapdragon 662",
+          "must_include": [["snapdragon"], ["662"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "legacy-02",
+          "category": "device_spec",
+          "question": "What is the battery capacity of the Poco M3?",
+          "reference": "6000 mAh",
+          "must_include": [["6000"], ["mah"]],
+          "must_not": ["\\b4\\s*gb\\b", "\\b4000\\s*mah\\b", "\\b5000\\s*mah\\b"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "legacy-03",
+          "category": "device_spec",
+          "question": "What GPU does the Poco M3 use?",
+          "reference": "Adreno 610",
+          "must_include": [["adreno"], ["610"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "legacy-04",
+          "category": "science",
+          "question": "What is photosynthesis?",
+          "reference": "Process by which plants use sunlight, water and carbon dioxide to make glucose and oxygen.",
+          "must_include": [["sunlight|sun light|light"], ["carbon dioxide|co2"], ["oxygen"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "legacy-05",
+          "category": "science",
+          "question": "Why is the sky blue?",
+          "reference": "Rayleigh scattering: shorter (blue) wavelengths scatter more than longer ones.",
+          "must_include": [["scatter"], ["blue"]],
+          "must_not": ["lord rayleigh.{0,40}1890", "invented.{0,20}1890"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "legacy-06",
+          "category": "math",
+          "question": "What is a prime number?",
+          "reference": "A natural number greater than 1 with no positive divisors other than 1 and itself.",
+          "must_include": [["greater than 1|greater than one|>\\s*1"], ["divis|divisor|factor"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "legacy-07",
+          "category": "coding",
+          "question": "How does binary search work?",
+          "reference": "Repeatedly halve a sorted array by comparing the target to the middle element.",
+          "must_include": [["sort"], ["mid|middle|half"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "legacy-08",
+          "category": "coding",
+          "question": "How do you reverse a linked list?",
+          "reference": "Iterate with prev/curr/next pointers, re-pointing next to prev.",
+          "must_include": [["prev"], ["next"], ["curr|current|head"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        }
+      ]
+    },
+    {
+      "id": "heldout_v1",
+      "purpose": "Fresh questions absent from every Hexon training corpus. This is the fair comparison set.",
+      "contaminated_for": [],
+      "items": [
+        {
+          "id": "h-001",
+          "category": "science",
+          "question": "What is the chemical symbol for iron?",
+          "reference": "Fe",
+          "must_include": [["\\bfe\\b"]],
+          "must_not": [],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-002",
+          "category": "science",
+          "question": "What is the hardest natural substance?",
+          "reference": "Diamond",
+          "must_include": [["diamond"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-003",
+          "category": "science",
+          "question": "How many bones are in the adult human body?",
+          "reference": "206",
+          "must_include": [["\\b206\\b"]],
+          "must_not": ["\\b306\\b", "\\b201\\b", "\\b300\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-004",
+          "category": "science",
+          "question": "What is the largest organ in the human body?",
+          "reference": "The skin",
+          "must_include": [["skin"]],
+          "must_not": ["\\bliver\\b"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-005",
+          "category": "science",
+          "question": "What is the chemical formula for table salt?",
+          "reference": "NaCl (sodium chloride)",
+          "must_include": [["\\bnacl\\b", "sodium chloride"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-006",
+          "category": "science",
+          "question": "Which blood cells carry oxygen around the body?",
+          "reference": "Red blood cells (erythrocytes), via haemoglobin",
+          "must_include": [["red blood cell", "erythrocyte", "hemoglobin", "haemoglobin"]],
+          "must_not": ["white blood cell"] ,
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-007",
+          "category": "science",
+          "question": "Which organelle is known as the powerhouse of the cell?",
+          "reference": "Mitochondrion (mitochondria)",
+          "must_include": [["mitochondri"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-008",
+          "category": "science",
+          "question": "At sea level, at what temperature in Celsius does water boil?",
+          "reference": "100 degrees Celsius",
+          "must_include": [["\\b100\\b"]],
+          "must_not": ["\\b212\\b", "\\b50\\b", "\\b120\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-009",
+          "category": "science",
+          "question": "Which gas is most abundant in the Earth's atmosphere?",
+          "reference": "Nitrogen (~78%)",
+          "must_include": [["nitrogen"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-010",
+          "category": "science",
+          "question": "How many chambers does the human heart have?",
+          "reference": "Four",
+          "must_include": [["\\bfour\\b", "\\b4\\b"]],
+          "must_not": ["\\bthree\\b", "\\bfive\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-011",
+          "category": "geography",
+          "question": "What is the capital of Australia?",
+          "reference": "Canberra",
+          "must_include": [["canberra"]],
+          "must_not": ["sydney", "melbourne"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-012",
+          "category": "geography",
+          "question": "What is the capital of Canada?",
+          "reference": "Ottawa",
+          "must_include": [["ottawa"]],
+          "must_not": ["toronto", "vancouver", "montreal"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-013",
+          "category": "geography",
+          "question": "Which is the largest ocean on Earth?",
+          "reference": "The Pacific Ocean",
+          "must_include": [["pacific"]],
+          "must_not": ["atlantic"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-014",
+          "category": "history",
+          "question": "In which year did the Berlin Wall fall?",
+          "reference": "1989",
+          "must_include": [["\\b1989\\b"]],
+          "must_not": ["\\b1991\\b", "\\b1987\\b", "\\b1979\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-015",
+          "category": "history",
+          "question": "Who was the first person to walk on the Moon?",
+          "reference": "Neil Armstrong",
+          "must_include": [["armstrong"]],
+          "must_not": ["buzz aldrin\\s*was the first", "\\baldrin\\b(?!.*armstrong)"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-016",
+          "category": "geography",
+          "question": "What is the smallest country in the world by area?",
+          "reference": "Vatican City",
+          "must_include": [["vatican"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-017",
+          "category": "geography",
+          "question": "Mount Everest lies in which mountain range?",
+          "reference": "The Himalayas",
+          "must_include": [["himalaya"]],
+          "must_not": ["alps", "andes", "rockies", "rocky mountains"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-018",
+          "category": "geography",
+          "question": "Which is the largest hot desert in the world?",
+          "reference": "The Sahara",
+          "must_include": [["sahara"]],
+          "must_not": ["gobi", "kalahari", "antarctic"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-019",
+          "category": "science",
+          "question": "Which planet is closest to the Sun?",
+          "reference": "Mercury",
+          "must_include": [["mercury"]],
+          "must_not": ["venus", "mars"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-020",
+          "category": "geography",
+          "question": "Which river is the longest in South America?",
+          "reference": "The Amazon",
+          "must_include": [["amazon"]],
+          "must_not": ["nile", "yangtze", "congo"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-021",
+          "category": "tech",
+          "question": "What does RAM stand for?",
+          "reference": "Random Access Memory",
+          "must_include": [["random access memory"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-022",
+          "category": "tech",
+          "question": "What does HTTP stand for?",
+          "reference": "HyperText Transfer Protocol",
+          "must_include": [["hyper ?text transfer protocol"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-023",
+          "category": "tech",
+          "question": "What does CPU stand for?",
+          "reference": "Central Processing Unit",
+          "must_include": [["central processing unit"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-024",
+          "category": "tech",
+          "question": "Who is credited with inventing the World Wide Web?",
+          "reference": "Tim Berners-Lee",
+          "must_include": [["berners"]],
+          "must_not": ["bill gates", "steve jobs", "elon musk"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-025",
+          "category": "tech",
+          "question": "In what year was the first iPhone released?",
+          "reference": "2007",
+          "must_include": [["\\b2007\\b"]],
+          "must_not": ["\\b2008\\b", "\\b2010\\b", "\\b1997\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-026",
+          "category": "tech",
+          "question": "What does HTML stand for?",
+          "reference": "HyperText Markup Language",
+          "must_include": [["hyper ?text markup language"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-027",
+          "category": "tech",
+          "question": "Which company develops the Android operating system?",
+          "reference": "Google",
+          "must_include": [["google"]],
+          "must_not": ["apple", "microsoft"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-028",
+          "category": "tech",
+          "question": "What is the decimal number 10 written in binary?",
+          "reference": "1010",
+          "must_include": [["\\b1010\\b"]],
+          "must_not": ["\\b101\\b", "\\b1000\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-029",
+          "category": "math",
+          "question": "What is 15% of 200?",
+          "reference": "30",
+          "must_include": [["\\b30\\b"]],
+          "must_not": ["\\b54\\b", "\\b58\\b", "\\b63\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-030",
+          "category": "math",
+          "question": "What is 7 multiplied by 8?",
+          "reference": "56",
+          "must_include": [["\\b56\\b"]],
+          "must_not": ["\\b54\\b", "\\b58\\b", "\\b63\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-031",
+          "category": "math",
+          "question": "How many degrees do the interior angles of a triangle add up to?",
+          "reference": "180",
+          "must_include": [["\\b180\\b"]],
+          "must_not": ["\\b360\\b", "\\b90\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-032",
+          "category": "math",
+          "question": "What is the next number in the sequence 2, 4, 8, 16?",
+          "reference": "32",
+          "must_include": [["\\b32\\b"]],
+          "must_not": ["\\b24\\b", "\\b20\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-033",
+          "category": "general",
+          "question": "What is the currency of Japan?",
+          "reference": "The yen",
+          "must_include": [["\\byen\\b"]],
+          "must_not": ["\\byuan\\b", "\\bwon\\b", "\\bdollar\\b"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-034",
+          "category": "general",
+          "question": "Who wrote the novel The Hobbit?",
+          "reference": "J.R.R. Tolkien",
+          "must_include": [["tolkien"]],
+          "must_not": ["rowling", "martin", "lewis"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-035",
+          "category": "general",
+          "question": "In which year did the Titanic sink?",
+          "reference": "1912",
+          "must_include": [["\\b1912\\b"]],
+          "must_not": ["\\b1911\\b", "\\b1913\\b", "\\b1898\\b"],
+          "check_unsupported_number": true
+        },
+        {
+          "id": "h-036",
+          "category": "science",
+          "question": "Which element has atomic number 1?",
+          "reference": "Hydrogen",
+          "must_include": [["hydrogen"]],
+          "must_not": ["helium", "oxygen"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-037",
+          "category": "general",
+          "question": "What is the tallest mountain above sea level?",
+          "reference": "Mount Everest",
+          "must_include": [["everest"]],
+          "must_not": ["\\bk2\\b", "kilimanjaro"],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-038",
+          "category": "coding",
+          "question": "Write a Python function that checks whether a string is a palindrome.",
+          "reference": "def is_palindrome(s): return s == s[::-1]",
+          "must_include": [["def\\s+"], ["palindrome"], ["return"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-039",
+          "category": "coding",
+          "question": "Write a Python function that computes the factorial of a number.",
+          "reference": "def factorial(n): iterative or recursive product of 1..n",
+          "must_include": [["def\\s+"], ["factorial"], ["return"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-040",
+          "category": "coding",
+          "question": "Write a Python function that counts the frequency of each word in a string.",
+          "reference": "def word_frequency(text): returns a dict of word -> count",
+          "must_include": [["def\\s+"], ["return"], ["dict|\\{\\}|count"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-041",
+          "category": "coding",
+          "question": "Write a Python function that merges two already-sorted lists into one sorted list.",
+          "reference": "Two-pointer merge of two sorted lists",
+          "must_include": [["def\\s+"], ["return"], ["while|for "] ],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-042",
+          "category": "coding",
+          "question": "Write a Python function that removes duplicates from a list while preserving the original order.",
+          "reference": "Track a seen set and append unseen items in order",
+          "must_include": [["def\\s+"], ["return"], ["seen|not in|set\\("]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-043",
+          "category": "coding",
+          "question": "Write a Python function that returns the greatest common divisor of two numbers.",
+          "reference": "Euclid's algorithm, GCD",
+          "must_include": [["def\\s+"], ["return"], ["gcd|greatest common|%|mod"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-044",
+          "category": "coding",
+          "question": "Write a Python function that flattens a nested list of lists into a single list.",
+          "reference": "Recursive or iterative flatten",
+          "must_include": [["def\\s+"], ["return"], ["for |while|isinstance|extend|append"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-045",
+          "category": "coding",
+          "question": "Write a Python class that implements a stack with push and pop methods.",
+          "reference": "class Stack: push/pop on a list",
+          "must_include": [["class\\s+"], ["def\\s+push"], ["def\\s+pop"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-046",
+          "category": "coding",
+          "question": "Write a Python function that prints FizzBuzz logic for a given number.",
+          "reference": "Multiples of 3 -> Fizz, 5 -> Buzz, both -> FizzBuzz",
+          "must_include": [["def\\s+"], ["fizz"], ["buzz"], ["%\\s*3|%3|3\\s*==\\s*0|divisible"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-047",
+          "category": "coding",
+          "question": "Write a Python function that checks whether two strings are anagrams of each other.",
+          "reference": "Compare sorted characters or a character count map",
+          "must_include": [["def\\s+"], ["anagram"], ["return"], ["sorted|count|counter|dict"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-048",
+          "category": "coding",
+          "question": "Write a JavaScript function that reverses a string.",
+          "reference": "function reverseString(s) { return s.split('').reverse().join(''); }",
+          "must_include": [["function|=>"], ["reverse"], ["return"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-049",
+          "category": "coding",
+          "question": "Write a Python function that counts how many vowels are in a string.",
+          "reference": "Count characters in a vowel set",
+          "must_include": [["def\\s+"], ["return"], ["aeiou|vowel"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        },
+        {
+          "id": "h-050",
+          "category": "coding",
+          "question": "Write a Python function that finds the largest number in a list.",
+          "reference": "def largest(nums): max over the list",
+          "must_include": [["def\\s+"], ["return"], ["max\\(|for |large"]],
+          "must_not": [],
+          "check_unsupported_number": false
+        }
+      ]
+    },
+    {
+      "id": "multiturn_anti_copy",
+      "purpose": "Checks that a later turn does not repeat an earlier assistant turn verbatim or near-verbatim.",
+      "contaminated_for": [],
+      "sequences": [
+        {
+          "id": "mt-01",
+          "turns": [
+            {"role": "user", "content": "What is the capital of France?"},
+            {"role": "user", "content": "What is the capital of Germany?"}
+          ],
+          "expect_turn_2_contains": [["paris|france"], ["berlin|germany"]]
+        },
+        {
+          "id": "mt-02",
+          "turns": [
+            {"role": "user", "content": "Explain what a variable is in programming."},
+            {"role": "user", "content": "Explain what a function is in programming."}
+          ],
+          "expect_turn_2_contains": [["function"]]
+        },
+        {
+          "id": "mt-03",
+          "turns": [
+            {"role": "user", "content": "How do I make a cup of tea?"},
+            {"role": "user", "content": "How do I make a cup of coffee?"}
+          ],
+          "expect_turn_2_contains": [["coffee"]]
+        }
+      ]
+    }
+  ]
+}

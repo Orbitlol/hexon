@@ -1,0 +1,1255 @@
+{
+  "model": "hexon-135m-q4_0",
+  "use_rag": false,
+  "sets": {
+    "legacy_keyword_check": {
+      "items": 8,
+      "correct": 2,
+      "accuracy": 0.25,
+      "group_coverage": 0.375,
+      "hallucinations": 0,
+      "hallucination_rate": 0.0,
+      "unsupported_number_items": 0,
+      "empty_responses": 0,
+      "mean_tokens": 70.8,
+      "mean_latency_ms": 4874.0,
+      "records": [
+        {
+          "id": "legacy-01",
+          "category": "device_spec",
+          "question": "What processor does the Poco M3 have?",
+          "reference": "Qualcomm Snapdragon 662",
+          "response": "The Poco M3 is a high-performance processor from the Poco M3.",
+          "tokens_generated": 18,
+          "latency_ms": 1588.0,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false
+          ],
+          "groups_total": 2,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "legacy-02",
+          "category": "device_spec",
+          "question": "What is the battery capacity of the Poco M3?",
+          "reference": "6000 mAh",
+          "response": "The Poco M3 has a battery capacity of 2.5Ah.",
+          "tokens_generated": 16,
+          "latency_ms": 1382.5,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false
+          ],
+          "groups_total": 2,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "legacy-03",
+          "category": "device_spec",
+          "question": "What GPU does the Poco M3 use?",
+          "reference": "Adreno 610",
+          "response": "The Poco M3 uses the CUDA-11.0.0-1.2.0-16.0.0-16.0-16.0_0.0.0-16_0.0.0-2.0.0-2.2.0-2.2.1.0-2.2.2.0-2_0.0.0-3.0.0-3.2.0-3.2.1.",
+          "tokens_generated": 110,
+          "latency_ms": 7401.8,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false
+          ],
+          "groups_total": 2,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "legacy-04",
+          "category": "science",
+          "question": "What is photosynthesis?",
+          "reference": "Process by which plants use sunlight, water and carbon dioxide to make glucose and oxygen.",
+          "response": "Photosynthesis is a biological process that allows plants to convert light energy from the sun into chemical energy stored in glucose. This process is crucial for life on Earth as it provides the primary energy source for most life forms.",
+          "tokens_generated": 43,
+          "latency_ms": 2912.9,
+          "correct": false,
+          "groups_matched": [
+            true,
+            false,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.3333333333333333,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "legacy-05",
+          "category": "science",
+          "question": "Why is the sky blue?",
+          "reference": "Rayleigh scattering: shorter (blue) wavelengths scatter more than longer ones.",
+          "response": "The sky is blue because of a process called Rayleigh scattering. This is a natural phenomenon where light from the sun interacts with molecules in the Earth's atmosphere. When sunlight reaches the Earth's atmosphere, it is scattered in all directions, with shorter wavelengths of light, such as blue and violet, being scattered more than the others. This is known as Rayleigh scattering. The blue light is then absorbed by the Earth's atmosphere, and the scattered blue light is re-emitted in all directions, resulting in the blue color of the sky.",
+          "tokens_generated": 109,
+          "latency_ms": 7461.2,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true
+          ],
+          "groups_total": 2,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "legacy-06",
+          "category": "math",
+          "question": "What is a prime number?",
+          "reference": "A natural number greater than 1 with no positive divisors other than 1 and itself.",
+          "response": "A prime number is a positive integer greater than 1 that has no positive integer divisors other than 1 and itself. In other words, a prime number is a positive integer greater 1 that has no positive integer factors other than 1.",
+          "tokens_generated": 50,
+          "latency_ms": 3715.7,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true
+          ],
+          "groups_total": 2,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "legacy-07",
+          "category": "coding",
+          "question": "How does binary search work?",
+          "reference": "Repeatedly halve a sorted array by comparing the target to the middle element.",
+          "response": "Binary search is a fundamental algorithm in computer science that involves dividing a problem into two parts: the worst-case scenario and the best-case scenario. The worst-case scenario is when the worst-case scenario occurs, where the worst-case scenario is the largest element that can be inserted into the worst-case scenario.\n\nIn binary search, the worst-case scenario is when the largest element is inserted into the worst-case scenario, which is the worst-case scenario.",
+          "tokens_generated": 110,
+          "latency_ms": 7244.6,
+          "correct": false,
+          "groups_matched": [
+            false,
+            false
+          ],
+          "groups_total": 2,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "legacy-08",
+          "category": "coding",
+          "question": "How do you reverse a linked list?",
+          "reference": "Iterate with prev/curr/next pointers, re-pointing next to prev.",
+          "response": "To reverse a linked list in Python, you can use the following code:\n\n```python\ndef reverse_linked_list(head):\n    prev = None\n    reversed_head = None\n    reversed_list = None\n    prev = None\n    reversed_list = head[::-1]\n    while prev is not None:\n        reversed_list = reversed_list[::-1]\n        prev = prev.reverse()\n    return reversed_list\n```",
+          "tokens_generated": 110,
+          "latency_ms": 7285.7,
+          "correct": false,
+          "groups_matched": [
+            true,
+            false,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.6666666666666666,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        }
+      ],
+      "grounded_items": 0,
+      "accuracy_grounded": 0.0,
+      "accuracy_ungrounded": 0.0
+    },
+    "heldout_v1": {
+      "items": 50,
+      "correct": 32,
+      "accuracy": 0.64,
+      "group_coverage": 0.6533,
+      "hallucinations": 1,
+      "hallucination_rate": 0.02,
+      "unsupported_number_items": 7,
+      "empty_responses": 0,
+      "mean_tokens": 32.2,
+      "mean_latency_ms": 2501.1,
+      "records": [
+        {
+          "id": "h-001",
+          "category": "science",
+          "question": "What is the chemical symbol for iron?",
+          "reference": "Fe",
+          "response": "The chemical symbol for iron is Fe.",
+          "tokens_generated": 8,
+          "latency_ms": 769.2,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-002",
+          "category": "science",
+          "question": "What is the hardest natural substance?",
+          "reference": "Diamond",
+          "response": "The most difficult natural substance is not a single entity but a collective of many substances that are not a single entity.",
+          "tokens_generated": 23,
+          "latency_ms": 1733.3,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-003",
+          "category": "science",
+          "question": "How many bones are in the adult human body?",
+          "reference": "206",
+          "response": "The human body has a total of 302 bones.",
+          "tokens_generated": 13,
+          "latency_ms": 1085.0,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "302"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-004",
+          "category": "science",
+          "question": "What is the largest organ in the human body?",
+          "reference": "The skin",
+          "response": "The largest organ in the human body is the human brain.",
+          "tokens_generated": 12,
+          "latency_ms": 1008.3,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-005",
+          "category": "science",
+          "question": "What is the chemical formula for table salt?",
+          "reference": "NaCl (sodium chloride)",
+          "response": "The chemical formula for table salt is NaCl.",
+          "tokens_generated": 10,
+          "latency_ms": 990.5,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-006",
+          "category": "science",
+          "question": "Which blood cells carry oxygen around the body?",
+          "reference": "Red blood cells (erythrocytes), via haemoglobin",
+          "response": "The blood cells that carry oxygen around the body are called erythrocytes.",
+          "tokens_generated": 14,
+          "latency_ms": 1162.7,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-007",
+          "category": "science",
+          "question": "Which organelle is known as the powerhouse of the cell?",
+          "reference": "Mitochondrion (mitochondria)",
+          "response": "The powerhouse of the cell is the mitochondria.",
+          "tokens_generated": 9,
+          "latency_ms": 840.2,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-008",
+          "category": "science",
+          "question": "At sea level, at what temperature in Celsius does water boil?",
+          "reference": "100 degrees Celsius",
+          "response": "At sea level, at what temperature in Celsius does water boil?",
+          "tokens_generated": 13,
+          "latency_ms": 1128.1,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-009",
+          "category": "science",
+          "question": "Which gas is most abundant in the Earth's atmosphere?",
+          "reference": "Nitrogen (~78%)",
+          "response": "The most abundant gas in the Earth's atmosphere is carbon dioxide (CO2).",
+          "tokens_generated": 16,
+          "latency_ms": 1321.4,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-010",
+          "category": "science",
+          "question": "How many chambers does the human heart have?",
+          "reference": "Four",
+          "response": "The human heart has a capacity of approximately 3.477 cubic centimeters.",
+          "tokens_generated": 17,
+          "latency_ms": 1364.5,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "3.477"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-011",
+          "category": "geography",
+          "question": "What is the capital of Australia?",
+          "reference": "Canberra",
+          "response": "The capital of Australia is Sydney.",
+          "tokens_generated": 7,
+          "latency_ms": 713.0,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": true,
+          "hallucination_matches": [
+            "sydney"
+          ],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-012",
+          "category": "geography",
+          "question": "What is the capital of Canada?",
+          "reference": "Ottawa",
+          "response": "The capital of Canada is Ottawa.",
+          "tokens_generated": 7,
+          "latency_ms": 694.2,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-013",
+          "category": "geography",
+          "question": "Which is the largest ocean on Earth?",
+          "reference": "The Pacific Ocean",
+          "response": "The largest ocean on Earth is the Pacific Ocean.",
+          "tokens_generated": 10,
+          "latency_ms": 890.3,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-014",
+          "category": "history",
+          "question": "In which year did the Berlin Wall fall?",
+          "reference": "1989",
+          "response": "The Berlin Wall fell on 1989.",
+          "tokens_generated": 11,
+          "latency_ms": 990.7,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-015",
+          "category": "history",
+          "question": "Who was the first person to walk on the Moon?",
+          "reference": "Neil Armstrong",
+          "response": "The first person to walk on the Moon is Neil Armstrong.",
+          "tokens_generated": 12,
+          "latency_ms": 1072.2,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-016",
+          "category": "geography",
+          "question": "What is the smallest country in the world by area?",
+          "reference": "Vatican City",
+          "response": "The smallest country in the world is 100000000.",
+          "tokens_generated": 18,
+          "latency_ms": 1469.9,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-017",
+          "category": "geography",
+          "question": "Mount Everest lies in which mountain range?",
+          "reference": "The Himalayas",
+          "response": "Mount Everest is located in the Himalayas mountain range.",
+          "tokens_generated": 10,
+          "latency_ms": 913.8,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-018",
+          "category": "geography",
+          "question": "Which is the largest hot desert in the world?",
+          "reference": "The Sahara",
+          "response": "The largest hot desert in the world is the Sahara Desert.",
+          "tokens_generated": 12,
+          "latency_ms": 1041.6,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-019",
+          "category": "science",
+          "question": "Which planet is closest to the Sun?",
+          "reference": "Mercury",
+          "response": "The planet closest to the Sun is Venus.",
+          "tokens_generated": 9,
+          "latency_ms": 884.9,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-020",
+          "category": "geography",
+          "question": "Which river is the longest in South America?",
+          "reference": "The Amazon",
+          "response": "The longest river in South America is the Amazon River.",
+          "tokens_generated": 11,
+          "latency_ms": 998.4,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-021",
+          "category": "tech",
+          "question": "What does RAM stand for?",
+          "reference": "Random Access Memory",
+          "response": "RAM stands for Random Access Memory. It is a type of computer memory that is used to store data temporarily.",
+          "tokens_generated": 22,
+          "latency_ms": 1780.0,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-022",
+          "category": "tech",
+          "question": "What does HTTP stand for?",
+          "reference": "HyperText Transfer Protocol",
+          "response": "The HTTP (Hypertext Transfer Protocol) is a standard protocol used for transferring data between devices.",
+          "tokens_generated": 19,
+          "latency_ms": 1570.4,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-023",
+          "category": "tech",
+          "question": "What does CPU stand for?",
+          "reference": "Central Processing Unit",
+          "response": "The CPU stands for Computer.",
+          "tokens_generated": 6,
+          "latency_ms": 707.2,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-024",
+          "category": "tech",
+          "question": "Who is credited with inventing the World Wide Web?",
+          "reference": "Tim Berners-Lee",
+          "response": "The World Wide Web (WWW) is credited to Tim Berners-Bloem as the creator of the first web page in 1991. However, the actual credit is usually given to Tim Berners-Bloeders' creation of the World Wide Web (WWW) in 1991.",
+          "tokens_generated": 68,
+          "latency_ms": 5339.2,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-025",
+          "category": "tech",
+          "question": "In what year was the first iPhone released?",
+          "reference": "2007",
+          "response": "The iPhone 14 is currently available for purchase on Apple's official website.",
+          "tokens_generated": 16,
+          "latency_ms": 1431.5,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "14"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-026",
+          "category": "tech",
+          "question": "What does HTML stand for?",
+          "reference": "HyperText Markup Language",
+          "response": "HTML stands for Hypertext Markup Language. It is a markup language used to create web pages.",
+          "tokens_generated": 20,
+          "latency_ms": 1849.5,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-027",
+          "category": "tech",
+          "question": "Which company develops the Android operating system?",
+          "reference": "Google",
+          "response": "The company that develops the Android operating system is Samsung Electronics.",
+          "tokens_generated": 12,
+          "latency_ms": 1115.2,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-028",
+          "category": "tech",
+          "question": "What is the decimal number 10 written in binary?",
+          "reference": "1010",
+          "response": "10 in binary is 111 in decimal.",
+          "tokens_generated": 12,
+          "latency_ms": 1136.5,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "111"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-029",
+          "category": "math",
+          "question": "What is 15% of 200?",
+          "reference": "30",
+          "response": "15% of 200 is 0.15 * 200 = 25.",
+          "tokens_generated": 24,
+          "latency_ms": 1961.6,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "0.15",
+            "25"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-030",
+          "category": "math",
+          "question": "What is 7 multiplied by 8?",
+          "reference": "56",
+          "response": "To calculate 7 multiplied by 8, you multiply 7 by itself, which is 49.",
+          "tokens_generated": 22,
+          "latency_ms": 1757.7,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "49"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-031",
+          "category": "math",
+          "question": "How many degrees do the interior angles of a triangle add up to?",
+          "reference": "180",
+          "response": "The answer is 180 degrees.",
+          "tokens_generated": 9,
+          "latency_ms": 928.4,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-032",
+          "category": "math",
+          "question": "What is the next number in the sequence 2, 4, 8, 16?",
+          "reference": "32",
+          "response": "The next number in the sequence is 16.",
+          "tokens_generated": 11,
+          "latency_ms": 1109.8,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-033",
+          "category": "general",
+          "question": "What is the currency of Japan?",
+          "reference": "The yen",
+          "response": "The currency of Japan is the Japanese Yen (JPY).",
+          "tokens_generated": 13,
+          "latency_ms": 1250.8,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-034",
+          "category": "general",
+          "question": "Who wrote the novel The Hobbit?",
+          "reference": "J.R.R. Tolkien",
+          "response": "The Hobbit: The Golden Bane is the 1931 novel written by Peter Jackson.",
+          "tokens_generated": 21,
+          "latency_ms": 1734.8,
+          "correct": false,
+          "groups_matched": [
+            false
+          ],
+          "groups_total": 1,
+          "group_coverage": 0.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-035",
+          "category": "general",
+          "question": "In which year did the Titanic sink?",
+          "reference": "1912",
+          "response": "The Titanic sank on April 1, 1912.",
+          "tokens_generated": 14,
+          "latency_ms": 1261.5,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [
+            "1"
+          ],
+          "empty": false
+        },
+        {
+          "id": "h-036",
+          "category": "science",
+          "question": "Which element has atomic number 1?",
+          "reference": "Hydrogen",
+          "response": "The element with atomic number 1 is hydrogen.",
+          "tokens_generated": 10,
+          "latency_ms": 979.7,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-037",
+          "category": "general",
+          "question": "What is the tallest mountain above sea level?",
+          "reference": "Mount Everest",
+          "response": "The tallest mountain above sea level is Mount Everest, the highest mountain on Earth.",
+          "tokens_generated": 16,
+          "latency_ms": 1406.1,
+          "correct": true,
+          "groups_matched": [
+            true
+          ],
+          "groups_total": 1,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-038",
+          "category": "coding",
+          "question": "Write a Python function that checks whether a string is a palindrome.",
+          "reference": "def is_palindrome(s): return s == s[::-1]",
+          "response": "```python\ndef is_palindrome(s):\n    return s == s[::-1]\n```\n\n\n\nThis function works by reversing the input string `s` and then comparing it to the original string. If they are the same, the function returns `True`; otherwise, it returns `False`.",
+          "tokens_generated": 64,
+          "latency_ms": 5032.6,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-039",
+          "category": "coding",
+          "question": "Write a Python function that computes the factorial of a number.",
+          "reference": "def factorial(n): iterative or recursive product of 1..n",
+          "response": "```python\ndef factorial(n):\n    if n < 0:\n        raise ValueError(\"Factorial is not defined for negative numbers\")\n    return n * factorial_non_negative(n)\n\ndef factorial_non_negative(num):\n    if num < 0:\n        raise ValueError(f\"Factorial is not defined for non-negative numbers\")\n    return num * factorial_non_negative_non_negative(num)\n```\n\nThis function uses the built-in `math.",
+          "tokens_generated": 110,
+          "latency_ms": 8489.5,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-040",
+          "category": "coding",
+          "question": "Write a Python function that counts the frequency of each word in a string.",
+          "reference": "def word_frequency(text): returns a dict of word -> count",
+          "response": "```python\ndef count_word_frequency(input_str):\n    return len(input_str.lower().split())\n\ndef count_word_frequency_with_context(input_str):\n    return sum(word.count() for word in input_str.lower().split() if word.count() > 1)\n```\n\nThis function uses a generator expression to count the frequency of each word in the input string.",
+          "tokens_generated": 110,
+          "latency_ms": 8235.1,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-041",
+          "category": "coding",
+          "question": "Write a Python function that merges two already-sorted lists into one sorted list.",
+          "reference": "Two-pointer merge of two sorted lists",
+          "response": "```python\ndef merge_sorted_lists(list1, list2):\n    return sorted(list1 + list2)\n```\n\n\n\nThis function uses the built-in `sorted()` function to merge the two lists, which is a more efficient and efficient solution compared to sorting the entire list.",
+          "tokens_generated": 62,
+          "latency_ms": 4723.6,
+          "correct": false,
+          "groups_matched": [
+            true,
+            true,
+            false
+          ],
+          "groups_total": 3,
+          "group_coverage": 0.6666666666666666,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-042",
+          "category": "coding",
+          "question": "Write a Python function that removes duplicates from a list while preserving the original order.",
+          "reference": "Track a seen set and append unseen items in order",
+          "response": "```python\ndef remove_duplicates_while_preserving_order(input_list):\n    return list(set(input_list))\n```\n\n\n\nThis function uses the built-in `set` function to remove duplicates from the input list while preserving the original order.",
+          "tokens_generated": 58,
+          "latency_ms": 4563.3,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-043",
+          "category": "coding",
+          "question": "Write a Python function that returns the greatest common divisor of two numbers.",
+          "reference": "Euclid's algorithm, GCD",
+          "response": "```python\ndef gcd_two_numbers(a, b):\n    return abs(a * b) // gcd(a, b)\n```\n\n\n\nThis function uses the built-in `math.gcd()` function from Python's math module to calculate the greatest common divisor.",
+          "tokens_generated": 62,
+          "latency_ms": 4637.3,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-044",
+          "category": "coding",
+          "question": "Write a Python function that flattens a nested list of lists into a single list.",
+          "reference": "Recursive or iterative flatten",
+          "response": "```python\ndef flatten_nested_list(nested_list):\n    return [x + list(flatten_nested_list(item)) for item in nested_list if isinstance(nested_list[0])]\n```\n\nThis function uses a list comprehension to flatten the nested list of lists into a single list of lists.",
+          "tokens_generated": 110,
+          "latency_ms": 7346.3,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-045",
+          "category": "coding",
+          "question": "Write a Python class that implements a stack with push and pop methods.",
+          "reference": "class Stack: push/pop on a list",
+          "response": "```python\nclass Stack:\n    def __init__(self):\n        self.stack = []\n\n    def push(self, value):\n        self.stack.append(value)\n\n    def pop(self):\n        if not self.empty_list():\n            return self.pop()\n        return None\n\n    def is_empty(self):\n        return len(self.stack) == 0\n\n    def size(self):\n        return len(list(self.stack))\n\n    def peek(self):\n        if not self._empty_list():",
+          "tokens_generated": 110,
+          "latency_ms": 7272.8,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-046",
+          "category": "coding",
+          "question": "Write a Python function that prints FizzBuzz logic for a given number.",
+          "reference": "Multiples of 3 -> Fizz, 5 -> Buzz, both -> FizzBuzz",
+          "response": "```python\ndef fizz_buzz(n):\n    if n < 10:\n        return f\"{n}FizzBuzz\"\n    elif n % 3 == 0:\n        return f\"{n}.Fizz\"\n    elif n % 2 == 0:\n        return f\"Fizz\"\n    elif n % memory_slice_size(2) == 0:\n        return fizz_buzz_slice_repeat(n)\n    else:\n        return fizz_buzzle_slice_",
+          "tokens_generated": 110,
+          "latency_ms": 7530.7,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "groups_total": 4,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-047",
+          "category": "coding",
+          "question": "Write a Python function that checks whether two strings are anagrams of each other.",
+          "reference": "Compare sorted characters or a character count map",
+          "response": "```python\ndef are_anagrams(str1, str2):\n    return sorted(str1) == sorted(str2)\n```\n\n\n\nThis function works by sorting the characters of the input strings and comparing the results. If the sorted strings are equal, the original strings are anagrams of each other.",
+          "tokens_generated": 65,
+          "latency_ms": 4542.6,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true,
+            true
+          ],
+          "groups_total": 4,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-048",
+          "category": "coding",
+          "question": "Write a JavaScript function that reverses a string.",
+          "reference": "function reverseString(s) { return s.split('').reverse().join(''); }",
+          "response": "```javascript\nfunction reverseString(str) {\n  return str.split(\"\").reverse().join(\"\");\n}\n```",
+          "tokens_generated": 60,
+          "latency_ms": 4659.3,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-049",
+          "category": "coding",
+          "question": "Write a Python function that counts how many vowels are in a string.",
+          "reference": "Count characters in a vowel set",
+          "response": "```python\ndef count_vowels_in_string(input_str):\n    return len(input_str) % 2 == 0\n```\n\n\n\nThis function takes a string as input and returns the number of vowels in the input string. It uses the modulo operator (`%`) to ensure the remainder is 0 when the input is a string.",
+          "tokens_generated": 77,
+          "latency_ms": 5543.8,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        },
+        {
+          "id": "h-050",
+          "category": "coding",
+          "question": "Write a Python function that finds the largest number in a list.",
+          "reference": "def largest(nums): max over the list",
+          "response": "```python\ndef find_largest_number(lst):\n    return max(lst)\n```\n\n\n\nThis function uses the built-in `max()` function to find the largest number in the list. If the list is empty, it returns 0 as the largest number.",
+          "tokens_generated": 57,
+          "latency_ms": 4086.6,
+          "correct": true,
+          "groups_matched": [
+            true,
+            true,
+            true
+          ],
+          "groups_total": 3,
+          "group_coverage": 1.0,
+          "hallucination": false,
+          "hallucination_matches": [],
+          "unsupported_numbers": [],
+          "empty": false
+        }
+      ],
+      "grounded_items": 0,
+      "accuracy_grounded": 0.0,
+      "accuracy_ungrounded": 0.0
+    }
+  },
+  "multiturn": {
+    "sequences": [
+      {
+        "id": "mt-01",
+        "responses": [
+          "The capital of France is Paris.",
+          "The capital of Germany is Berlin."
+        ],
+        "expect_turn_2_contains_met": true,
+        "copy_checks": [
+          {
+            "turn": 2,
+            "identical": false,
+            "ngram_overlap_with_previous": 0.0,
+            "copying": false
+          }
+        ],
+        "any_copying": false
+      },
+      {
+        "id": "mt-02",
+        "responses": [
+          "In programming, a variable is a resource that can be used by a program to store data. It can hold a value, perform a computation, or store information. In other words, a variable is a placeholder that can be modified or reassigned.\n\nIn a programming language, a variable is a data type that can hold a value. It can be assigned a value to a variable, which is known as a data type. In programming, a variable is a container that holds a value, and it can be used to store data.",
+          "In programming, a function is a block of code that performs a specific task. It is a reusable unit of code that can be reused to perform a particular task. Functions are often used to encapsulate a block of code, making it more readable and maintainable.\n\nA function is a function that takes a set of statements as an argument. It is a function that can accept and return a value. In programming, functions are often used to perform a particular task."
+        ],
+        "expect_turn_2_contains_met": true,
+        "copy_checks": [
+          {
+            "turn": 2,
+            "identical": false,
+            "ngram_overlap_with_previous": 0.0,
+            "copying": false
+          }
+        ],
+        "any_copying": false
+      },
+      {
+        "id": "mt-03",
+        "responses": [
+          "1. **Cup of Tea**: 1. **Cup of Tea** - 1. **Cup of tea** - 1. **Cups of tea** - 1. 2. **Cups of tea**\n2. **Cups of tea**: 2. **Cups of Tea** - 2. **Cups of coffee** - 2. 3. **Cups of coffee**\n4. **Cups of coffee**: 4.",
+          "1. **Cappuccino**: 1. 1. **Coffee** - 1 1. 1. 1. 3. 3. 3.\n2. **Coffee**: 2. 2. 2. 4. 4. 4.\n3. **Cappuccino**: **Cappuccino** - 3. 3. 4. 4. **Cappuccino** - **Cappuccino** -  4."
+        ],
+        "expect_turn_2_contains_met": true,
+        "copy_checks": [
+          {
+            "turn": 2,
+            "identical": false,
+            "ngram_overlap_with_previous": 0.0,
+            "copying": false
+          }
+        ],
+        "any_copying": false
+      }
+    ],
+    "copying_rate": 0.0,
+    "expectation_met_rate": 1.0
+  },
+  "wall_clock_s": 197.0
+}
