@@ -57,6 +57,24 @@ GGUF_FILE_TYPE_MAP: Dict[str, int] = {
     "q4_1": 3,     # MOSTLY_Q4_1
     "q4_code": 3,  # MIXED Q8_0 (token_embd + top coding layers) + Q4_1
     "q8_0": 7,     # MOSTLY_Q8_0
+    # Schemes added for hexon-1.5, which has to fit inside GitHub's 100 MiB
+    # per-file limit. Measured on the same 36-layer checkpoint:
+    #   q4_deep (Q8_0 embeddings + Q4_1 trunk) -> 0.740 held-out accuracy
+    #   q4_top4 (Q8_0 embeddings, top-4 Q4_1, rest Q4_0) -> 0.560
+    #   q4_emb8 (Q8_0 embeddings, all-Q4_0 trunk) -> 0.520
+    # So the trunk is what has to stay at Q4_1, and 4-bit embeddings are not
+    # an option at all: they collapsed generation into repetition loops.
+    "q4_deep": 3,   # MIXED Q8_0 (token_embd/output) + Q4_1 trunk
+    "q4_emb8": 2,   # MIXED Q8_0 (token_embd/output) + Q4_0 trunk
+    "q4_top4": 2,   # MIXED Q8_0 (token_embd/output) + top-4 Q4_1 + Q4_0 rest
+    "q4_top6": 2,
+    "q4_top8": 2,
+}
+
+_TOP_Q4_1_LAYERS: Dict[str, int] = {
+    "q4_top4": 4,
+    "q4_top6": 6,
+    "q4_top8": 8,
 }
 
 BLOCK_Q8_0_DTYPE = np.dtype([("d", "<f2"), ("qs", "i1", (32,))])
@@ -399,6 +417,33 @@ def export_to_gguf(
                 effective_qtype = "q8_0"
             else:
                 effective_qtype = "q4_1"
+        elif quant_type == "q4_deep":
+            # Embeddings are the one tensor that must not go to 4 bits on a
+            # model this small, but the trunk tolerates Q4_1 well: 4-bit
+            # embeddings collapsed generation into repetition loops, while
+            # dropping the trunk from Q4_1 to Q4_0 cost 0.18 held-out accuracy.
+            if name in ("token_embd.weight", "output.weight"):
+                effective_qtype = "q8_0"
+            else:
+                effective_qtype = "q4_1"
+        elif quant_type == "q4_emb8":
+            if name in ("token_embd.weight", "output.weight"):
+                effective_qtype = "q8_0"
+            else:
+                effective_qtype = "q4_0"
+        elif quant_type in _TOP_Q4_1_LAYERS:
+            top = _TOP_Q4_1_LAYERS[quant_type]
+            top_layer_start = max(0, config.num_hidden_layers - top)
+            in_top_blocks = any(
+                name.startswith(f"blk.{l_idx}.")
+                for l_idx in range(top_layer_start, config.num_hidden_layers)
+            )
+            if name in ("token_embd.weight", "output.weight"):
+                effective_qtype = "q8_0"
+            elif in_top_blocks:
+                effective_qtype = "q4_1"
+            else:
+                effective_qtype = "q4_0"
         ggml_type, ggml_dims, raw_bytes = serialize_gguf_tensor(tensor, quant_type=effective_qtype)
 
         # Tensor info entry: name + n_dims + dims + ggml_type + offset

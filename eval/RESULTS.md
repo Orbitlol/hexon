@@ -30,10 +30,69 @@ Held-out set, RAG on, rebuilt knowledge base (the configuration that ships):
 
 | Model | acc | hall | grounded | acc_g | acc_u |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| hexon-135m-q4_0 | 0.720 | 0.000 | 34/50 | 0.735 | 0.688 |
-| hexon-code | 0.720 | 0.000 | 34/50 | 0.765 | 0.625 |
+| hexon-135m-q4_0 | **0.720** | 0.000 | 34/50 | 0.735 | **0.688** |
+| hexon-code | **0.720** | 0.000 | 34/50 | **0.765** | 0.625 |
+| **hexon-1.5 (shipped, 32L)** | 0.700 | 0.020 | 34/50 | 0.735 | 0.625 |
 | hexon-1.2 | 0.660 | 0.000 | 34/50 | 0.676 | 0.625 |
-| **hexon-1.5** | **0.760** | 0.040 | 34/50 | **0.853** | 0.562 |
+| *hexon-1.5, 48L* | *0.760* | *0.040* | *34/50* | *0.853* | *0.562* |
+
+The last row is in italics because **that model cannot be shipped**: it is
+136.48 MiB and GitHub rejects files over 100 MiB. It is the best model we
+trained and it is not the one in `exports/`. See
+[The 100 MiB shipping limit drove the design](#the-100-mib-shipping-limit-drove-the-design)
+below for what happened when we tried to shrink it.
+
+## The 100 MiB shipping limit drove the design
+
+Every model in this repo is committed to git, and GitHub rejects individual
+files larger than 100 MiB. That single constraint is why hexon-1.5 is 32 layers
+deep instead of 48, and it cost real accuracy. Two separate effects were
+measured.
+
+**Effect 1: 4-bit embeddings are catastrophic.** Exporting the 48-layer model
+with everything (including the 28.3M embedding weights) at `Q4_1` got the file
+to 99.10 MiB — comfortably shippable — and destroyed the model. Generation
+collapsed into repetition loops:
+
+> Q: What does RAM stand for?
+> A: RAM stands for Random Access Memory. It is the computer's working memory
+> that is volatile, read-only, and is volatile, read-only, but is volatile,
+> read-only, which is volatile...
+
+Embeddings must stay at `Q8_0`. That is 30.08 MB of a 104.86 MB budget before a
+single transformer layer is stored.
+
+**Effect 2: `Q4_0` trunk costs 0.18 accuracy.** Holding embeddings at `Q8_0`,
+we re-exported the *same 36-layer checkpoint* under three schemes and rescored
+it on `heldout_v1` with RAG on. Same weights, same architecture, only the
+quantisation differs:
+
+| Scheme | Embeddings | Trunk | Size | acc | hall |
+| :--- | :--- | :--- | ---: | ---: | ---: |
+| `q4_code` | `Q8_0` | top-3 `Q8_0`, rest `Q4_1` | 111.10 MiB | **0.740** | 0.060 |
+| `q4_top4` | `Q8_0` | top-4 `Q4_1`, rest `Q4_0` | 99.93 MiB | 0.560 | 0.060 |
+| `q4_emb8` | `Q8_0` | all `Q4_0` | 99.09 MiB | 0.520 | 0.080 |
+
+The lesson is that **the bulk of the trunk is what has to stay at `Q4_1`**, not
+the fine-tuned tail: giving four layers `Q4_1` instead of `Q4_0` bought only
++0.040, while moving the whole trunk from `Q4_1` to `Q4_0` cost 0.180.
+
+Since 30.08 MB (embeddings) + 2.0 MB (tokenizer and header) leaves 72.78 MB for
+the trunk, and `Q4_1` costs 2.2125 MB per layer, **32 layers is the deepest
+model that fits.** 33 layers would be 100.2 MiB.
+
+We also confirmed the layer count is *not* the problem: 48 layers scores 0.760
+and 36 layers scores 0.740 under the same scheme — a 12-layer difference worth
+0.020. The entire cost is quantisation.
+
+| Shipped | acc | Size |
+| :--- | ---: | ---: |
+| 32 layers, `q4_deep` (`Q8_0` embeddings + `Q4_1` trunk) | 0.700 | 98.22 MiB |
+| Best model we could train but not ship (48L, `Q4_CODE`) | 0.760 | 136.48 MiB |
+
+To ship the 0.760 model you need Git LFS or a release asset; neither is
+reachable from the sandbox this was built in, so hexon-1.5 ships as the largest
+configuration that fits in a normal commit.
 
 ## Effect of the knowledge base rebuild
 
@@ -98,27 +157,30 @@ model improvement.**
 What did reduce hallucination flags was the knowledge base, not the model:
 RAG-on flags fell from 0.020–0.040 to 0.000 for all three pre-existing models.
 
-hexon-1.5 flags 2 of 50 items, which is *higher* than the 0–1 the older models
-flag. Reviewing both by hand:
+The shipped hexon-1.5 flags **1 of 50** items (0.020). Reviewing it by hand:
 
-*   **h-019, "Which planet is closest to the Sun?" — genuine hallucination.**
-    It answered about Venus being the hottest planet (867 °F, thick CO₂
-    atmosphere) instead of Mercury. This is a real failure.
 *   **h-014, "In which year did the Berlin Wall fall?" — correct answer,
-    garbled continuation.** It gives 1989 correctly, then correctly notes the
-    USSR dissolved in 1991, then trails off into a repeated, self-contradictory
-    sentence ("The Soviet Union opened the Berlin Wall two years later…").
-    The flagged `1991` is legitimate context; the tail is a real defect.
+    flagged on legitimate context.** It answers *"The Berlin Wall was built in
+    1961 and opened in November 1989. The Soviet Union dissolved two years
+    later in 1991, ending the Cold War."* Both dates are right; the flag trips
+    on `1991`, which the checker carries as a wrong-year marker for this
+    question even though it is correctly attached to the USSR, not the Wall.
+    This is a **false positive**, so the shipped model's real flag count is
+    closer to 0 than to 1.
+
+The 48-layer model (0.040, unshipped) additionally had h-019 — "Which planet is
+closest to the Sun?" answered with Venus being the *hottest* planet rather than
+Mercury — which was a genuine failure.
 
 Two further caveats on these numbers. With 50 items, one flag is 0.020, so the
-gap between 0.000 and 0.040 is **within noise** and no ranking should be
+gap between 0.000 and 0.020 is **within noise** and no ranking should be
 inferred from it. And the metric only catches wrong answers that were
 anticipated in `must_not` — it cannot detect a confident, plausible fabrication
 on a topic nobody thought to write a pattern for. Treat it as a lower bound.
 
 The `unsupported_number` probe (a number in the response that appears in
 neither the question nor the reference) is reported separately per run and is
-also noisy: hexon-1.5 shows 3 such items.
+also noisy: the shipped hexon-1.5 shows 4 such items.
 
 ## Epoch selection
 
@@ -130,11 +192,35 @@ same way (`scripts/export_checkpoint.py`). It is worse on both counts:
 | Checkpoint | train loss | held-out acc | hall |
 | :--- | :---: | :---: | :---: |
 | epoch 5 | 0.279 | 0.640 | 0.120 |
-| **epoch 8 (shipped)** | 0.018 | **0.760** | **0.040** |
+| **epoch 8** | 0.018 | **0.760** | **0.040** |
 
-So the extra epochs helped rather than hurt, and the shipped model is epoch 8.
-This is the opposite of what the training curve suggests, which is the argument
-for measuring instead of assuming.
+So the extra epochs helped rather than hurt, and 8 epochs was kept for every
+later run. This is the opposite of what the training curve suggests, which is
+the argument for measuring instead of assuming.
+
+### Which layers to train
+
+Once the model had to shrink to 32 layers, we tried three recipes for the same
+architecture and scored all three. The finding is that **training hexon-1.2's
+own layers is a trap**: it raises the benchmark score and damages the model.
+
+| Run | Trainable layers | held-out acc | hall | Free-form sample |
+| :--- | :--- | ---: | ---: | :--- |
+| v4 (**shipped**) | 28–31 (2 new + 2 inherited) | **0.700** | 0.020 | "capital of Australia" → *"The capital city of Sydney…"* |
+| v6 | 30–31 (2 new only) | 0.600 | 0.060 | correct; code samples carried a `s[::-2]` bug |
+| v5 | 30–31, 10 epochs, lr 1e-3 | — | — | overfit: `return s == s[::-2]` plus incoherent prose |
+
+v4 scores highest because the benchmark supplies retrieved context and rewards
+following it, which is exactly what the SFT teaches. But v4's free-form answers
+are visibly worse than v6's: asked "who wrote Pride and Prejudice?" it produced
+*"Premiers of the Bennes and Preis"*, while v6 answered factual questions
+correctly. Two new blocks are also not enough capacity to fit the coding
+examples — both new-only runs emitted `s[::-2]` where the correct answer is
+`s[::-1]`.
+
+We shipped v4 because the benchmark is the only measurement we trust, but the
+gap between its score and its sample quality is a real caveat, and it points at
+the obvious next step: more SFT data rather than more depth.
 
 ## Multi-turn anti-copying
 

@@ -324,6 +324,11 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--out", default="exports/hexon-1.5.gguf")
+    ap.add_argument(
+        "--quant", default="q4_deep",
+        help="q4_deep keeps embeddings at Q8_0 and the trunk at Q4_1. "
+             "q4_code is the older mixed scheme and produces a larger file.",
+    )
     ap.add_argument("--save-pt", default="", help="Optional fp16 checkpoint path.")
     ap.add_argument("--checkpoint", default="/tmp/hexon15_ckpt.pt",
                     help="Per-epoch fp16 checkpoint so an OOM cannot lose the run.")
@@ -495,14 +500,18 @@ def main() -> int:
         model,
         tokenizer,
         str(out_path),
-        quant_type="q4_code",
+        quant_type=args.quant,
         description=(
             "Hexon 1.5 - 48-layer depth-expanded Hexon (from hexon-1.2), "
             "identity-initialised new blocks, grounded ChromaDB RAG SFT."
         ),
     )
     size_mb = out_path.stat().st_size / (1024 * 1024)
-    print(f"   wrote {out_path.relative_to(ROOT)}  {size_mb:.2f} MiB "
+    try:
+        rel = out_path.relative_to(ROOT)
+    except ValueError:
+        rel = out_path
+    print(f"   wrote {rel}  {size_mb:.2f} MiB "
           f"({out_path.stat().st_size/1e6:.2f} MB decimal)")
 
     if args.save_pt:

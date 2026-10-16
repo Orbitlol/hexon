@@ -27,11 +27,19 @@ By design, **Hexon never trains on the mobile device**:
 | `hexon-mobile-35m` | 12 | 512 | 1408 | 8 / 2 | 2048 | 41.9M | ~44.5 MB | ~23.8 MB |
 | `hexon-mobile-125m` | 16 | 768 | 2048 | 12 / 4 | 2048 | 121.6M | ~129 MB | ~69 MB |
 | `hexon-135m` / `hexon-code` | 30 | 576 | 1536 | 9 / 3 | 2048 | 134.5M | ~143 MB | ~103 MB |
-| **`hexon-1.5`** | **48** | 576 | 1536 | 9 / 3 | 2048 | **198.2M** | ~211 MB | **~143 MB** (`q4_code`) |
+| **`hexon-1.5`** | **32** | 576 | 1536 | 9 / 3 | 2048 | **141.6M** | ~150 MB | **98.22 MiB** (`q4_deep`) |
 
-`hexon-1.5` adds depth only — same width, same 49152 vocabulary, 18 extra
+`hexon-1.5` adds depth only — same width, same 49152 vocabulary, two extra
 decoder blocks on top of `hexon-1.2`'s 30. See [How hexon-1.5 was
 built](#how-hexon-15-was-built).
+
+**32 layers is not a design choice, it is where the arithmetic stops.** GitHub
+rejects files over 100 MiB, and that limit interacts badly with quantisation:
+dropping the transformer trunk from `Q4_1` to `Q4_0` to save space costs 0.18
+held-out accuracy, which is far more than the extra depth buys. With embeddings
+held at `Q8_0` (see below), 32 layers is the deepest model whose trunk still
+fits at `Q4_1`. The ablation is in
+[`eval/RESULTS.md`](eval/RESULTS.md#the-100-mib-shipping-limit-drove-the-design).
 
 ---
 
@@ -41,7 +49,7 @@ A trained working `hexon-nano` checkpoint and its mobile export files are includ
 
 | File | Format | Quantization | Size | Purpose |
 | :--- | :--- | :--- | :---: | :--- |
-| `exports/hexon-1.5.gguf` | **GGUF v3** | `Q4_CODE` | **136.48 MiB** | **Flagship. 48 layers / 198.2M params, depth-expanded from hexon-1.2. Ships as a release asset — see note below.** |
+| `exports/hexon-1.5.gguf` | **GGUF v3** | `Q4_DEEP` (`Q8_0` embeddings + `Q4_1` trunk) | **98.22 MiB** | **Flagship. 32 layers / 141.6M params, depth-expanded from hexon-1.2.** |
 | `exports/hexon-1.2.gguf` | **GGUF v3** | `Q4_CODE` | **98.42 MiB** | Prior flagship, 30 layers / 134.5M params |
 | `exports/hexon-code.gguf` | **GGUF v3** | `Q4_CODE` | **98.42 MiB** | Coding-heavy 30-layer variant |
 | `exports/hexon-135m-q4_0.gguf` | **GGUF v3** | 4-bit/8-bit (`Q4_1`/`Q8_0`) | **93.81 MiB** | **Flagship 135M (134.5M params) compositional mobile AI + ChromaDB RAG** |
@@ -56,12 +64,10 @@ A trained working `hexon-nano` checkpoint and its mobile export files are includ
 
 ---
 
-> **Why `hexon-1.5.gguf` is not committed to the repository.** GitHub rejects
-> individual files larger than 100 MiB. `hexon-1.5.gguf` is 136.48 MiB, so it is
-> published as an asset on the
-> [release page](https://github.com/Orbitlol/hexon/releases) instead, and
-> mirrored on Google Drive. `hexon-1.2.gguf` and `hexon-code.gguf` are 98.42 MiB
-> each and are committed directly.
+**Every model in this table is committed to the repository and downloadable
+straight from GitHub.** The largest is `hexon-1.5.gguf` at 98.22 MiB, which
+sits just under GitHub's 100 MiB per-file limit — that limit is the reason
+hexon-1.5 is 32 layers deep rather than the 48 it was first trained at.
 
 ---
 
@@ -72,12 +78,18 @@ Honest numbers live in **[`eval/RESULTS.md`](eval/RESULTS.md)**. Summary of the
 
 | Model | Accuracy | Hallucination flags | Grounded accuracy | Ungrounded accuracy |
 | :--- | :---: | :---: | :---: | :---: |
-| hexon-135m-q4_0 | 0.720 | 0.000 | 0.735 | 0.688 |
-| hexon-code | 0.720 | 0.000 | 0.765 | 0.625 |
+| hexon-135m-q4_0 | **0.720** | 0.000 | 0.735 | **0.688** |
+| hexon-code | **0.720** | 0.000 | **0.765** | 0.625 |
+| **hexon-1.5 (shipped)** | 0.700 | 0.020 | 0.735 | 0.625 |
 | hexon-1.2 | 0.660 | 0.000 | 0.676 | 0.625 |
-| **hexon-1.5** | **0.760** | 0.040 | **0.853** | 0.562 |
 
-Three things worth knowing before quoting any of it:
+Four things worth knowing before quoting any of it:
+
+0. **The shipped hexon-1.5 is not the best hexon-1.5 we trained.** The
+   48-layer version scored **0.760** held-out — the best number any model in
+   this repo has produced — but at `Q4_CODE` it is 136.48 MiB and GitHub will
+   not accept it. The 32-layer model that *does* fit scores 0.700. Full
+   ablation in [`eval/RESULTS.md`](eval/RESULTS.md#the-100-mib-shipping-limit-drove-the-design).
 
 1. **The old 8-item keyword check was not a benchmark.** 4 of its 8 questions
    appear verbatim in training corpora, and all 8 were part of hexon-1.2's
@@ -86,9 +98,12 @@ Three things worth knowing before quoting any of it:
 2. **The hallucination-reduction target has not been met as a model
    improvement.** The drop in hallucination flags came from rebuilding the
    ChromaDB knowledge base, not from hexon-1.5. With 50 items, one flag is
-   0.020, so the 0.000-vs-0.040 spread is within noise.
+   0.020, so the 0.000-vs-0.020 spread across these models is within noise.
 3. **Scoring is keyword-based**, so accuracy is a floor rather than a grade,
    and hallucination flags only catch wrong answers that someone anticipated.
+4. **The spread between these four models is small.** With n=50, one question
+   is 0.020, so 0.720 and 0.660 are roughly two questions apart. Treat the
+   ordering as indicative, not settled.
 
 Reproduce with:
 
@@ -108,11 +123,14 @@ check of every eval question against every training corpus on every run.
 ## How hexon-1.5 was built
 
 1. **Depth expansion, not retraining.** `scripts/train_15.py` loads
-   `hexon-1.2.gguf`, keeps its 30 layers and adds 18 more. Each new block has
-   its `o_proj` and `down_proj` weights set to zero; because Hexon is pre-norm
-   with bias-free projections, a zeroed output projection makes the block an
-   identity function. Verified: before training, the 48-layer model's logits
-   match hexon-1.2's **exactly** (max absolute difference `0.0`).
+   `hexon-1.2.gguf`, keeps its 30 layers and adds more on top. Each new block
+   has its `o_proj` and `down_proj` weights set to zero; because Hexon is
+   pre-norm with bias-free projections, a zeroed output projection makes the
+   block an identity function. Verified: before training, the expanded model's
+   logits match hexon-1.2's **exactly** (max absolute difference `0.0`). The
+   same property means untrained blocks can later be *deleted* with no effect
+   on output — `scripts/prune_identity_layers.py` does exactly that and asserts
+   the logits still match before it will write a file.
 2. **Grounded SFT.** `scripts/build_15_sft.py` produces 126 records (55 facts,
    33 coding, 20 chat, 10 calibrated refusals, 8 multi-turn). Prompts reproduce
    `HexonChromaRAG.build_rag_prompt` byte for byte and are grounded in the real
@@ -248,6 +266,8 @@ scripts/
 ├── mine_knowledge.py          # Mine + filter PyPI and npm documentation
 ├── build_15_sft.py            # Build the grounded hexon-1.5 SFT set
 ├── train_15.py                # Depth-expand hexon-1.2 into hexon-1.5 and train
+├── prune_identity_layers.py   # Delete no-op blocks, verified bit-identical
+├── reexport_ckpt.py           # Re-export a checkpoint under another quant scheme
 └── export_checkpoint.py       # Export any training epoch to GGUF
 eval/
 ├── heldout_eval.json   # The benchmark: 50 held-out + 8 legacy + 3 multi-turn

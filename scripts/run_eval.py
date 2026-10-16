@@ -131,7 +131,7 @@ def main() -> int:
             out_file = out_dir / f"{model}__{cfg}.json"
             out_file.write_text(json.dumps(res, indent=2), encoding="utf-8")
             all_results.append(res)
-            print(f"   -> {out_file.relative_to(ROOT)}  ({res['wall_clock_s']}s)")
+            print(f"   -> {out_file}  ({res['wall_clock_s']}s)")
             for set_id, s in res["sets"].items():
                 print(
                     f"      {set_id:<22} acc={s['accuracy']:.3f} "
